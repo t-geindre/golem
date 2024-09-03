@@ -1,4 +1,4 @@
-module golem
+module github.com/t-geindre/golem
 
 go 1.22
 
