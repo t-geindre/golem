@@ -13,17 +13,12 @@ func NewConstraint() *Constraint {
 }
 
 func (c *Constraint) Update(e golem.Entity, w golem.World) {
-	cs, ok := e.(component.Constraint)
-	if !ok {
-		return
-	}
-	constraint := cs.GetConstraint()
+	constraint := component.GetConstraint(e)
+	position := component.GetPosition(e)
 
-	pos, ok := e.(component.Position)
-	if !ok {
+	if constraint == nil || position == nil {
 		return
 	}
-	position := pos.GetPosition()
 
 	if position.X < constraint.XMin {
 		position.X = constraint.XMin

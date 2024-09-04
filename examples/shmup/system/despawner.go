@@ -19,17 +19,17 @@ func NewDespawner(yMin, yMax float64, margin float64) *Despawner {
 }
 
 func (d *Despawner) Update(e golem.Entity, w golem.World) {
-	de, ok := e.(component.Despawn)
-	if !ok {
-		return
+	life := component.GetLife(e)
+	if life != nil && life.Current <= 0 {
+		w.RemoveEntity(e)
 	}
-	despawn := de.GetDespawn()
 
-	p, ok := e.(component.Position)
-	if !ok {
+	despawn := component.GetDespawn(e)
+	position := component.GetPosition(e)
+
+	if despawn == nil || position == nil {
 		return
 	}
-	position := p.GetPosition()
 
 	if despawn.Direction == component.DespawnDirectionUp && position.Y < d.yMin-d.margin {
 		w.RemoveEntity(e)

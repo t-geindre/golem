@@ -30,7 +30,7 @@ func (c *Collision) Update(left golem.Entity, w golem.World) {
 		return
 	}
 
-	leftCol := c.getCollider(left)
+	leftCol := component.GetCollider(left)
 	if leftCol == nil {
 		return
 	}
@@ -41,16 +41,23 @@ func (c *Collision) Update(left golem.Entity, w golem.World) {
 				continue
 			}
 
-			rightCol := c.getCollider(right)
+			rightCol := component.GetCollider(right)
 			if rightCol == nil {
 				continue
 			}
 
-			if leftCol.CollidesWith(rightCol) {
+			if c.collides(leftCol, rightCol) {
 				rule.Handler(left, right, w)
 			}
 		}
 	}
+}
+
+func (c *Collision) collides(l, r *component.ColliderImpl) bool {
+	return l.Px < r.Px+r.Width &&
+		l.Px+l.Width > r.Px &&
+		l.Py < r.Py+r.Height &&
+		l.Py+l.Height > r.Py
 }
 
 func (c *Collision) getCollider(e golem.Entity) *component.ColliderImpl {

@@ -14,13 +14,8 @@ func NewShoot() *Shoot {
 }
 
 func (s *Shoot) Update(e golem.Entity, w golem.World) {
-	sh, ok := e.(component.Shoot)
-	if !ok {
-		return
-	}
-	shoot := sh.GetShoot()
-
-	if !shoot.Shooting {
+	shoot := component.GetShoot(e)
+	if shoot == nil || !shoot.Shooting {
 		return
 	}
 
@@ -33,17 +28,12 @@ func (s *Shoot) Update(e golem.Entity, w golem.World) {
 
 	w.AddEntity(bullet)
 
-	p, ok := bullet.(component.Position)
-	if !ok {
-		return
-	}
-	bPos := p.GetPosition()
+	bPos := component.GetPosition(bullet)
+	srcPos := component.GetPosition(e)
 
-	p, ok = e.(component.Position)
-	if !ok {
+	if bPos == nil || srcPos == nil {
 		return
 	}
-	srcPos := p.GetPosition()
 
 	bPos.X = srcPos.X + shoot.AtX
 	bPos.Y = srcPos.Y + shoot.AtY

@@ -1,5 +1,7 @@
 package component
 
+import "github.com/t-geindre/golem/pkg/golem"
+
 type Velocity interface {
 	GetVelocity() *VelocityImpl
 }
@@ -17,4 +19,11 @@ func NewVelocity(x, y float64) Velocity {
 
 func (v *VelocityImpl) GetVelocity() *VelocityImpl {
 	return v
+}
+
+func GetVelocity(e golem.Entity) *VelocityImpl {
+	if v, ok := e.(Velocity); ok {
+		return v.GetVelocity()
+	}
+	return nil
 }

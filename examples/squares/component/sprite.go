@@ -1,6 +1,9 @@
 package component
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/t-geindre/golem/pkg/golem"
+)
 
 type Sprite interface {
 	GetSprite() *SpriteImpl
@@ -17,4 +20,11 @@ type SpriteImpl struct {
 
 func (s *SpriteImpl) GetSprite() *SpriteImpl {
 	return s
+}
+
+func GetSprite(e golem.Entity) *SpriteImpl {
+	if s, ok := e.(Sprite); ok {
+		return s.GetSprite()
+	}
+	return nil
 }

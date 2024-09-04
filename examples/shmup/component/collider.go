@@ -1,5 +1,7 @@
 package component
 
+import "github.com/t-geindre/golem/pkg/golem"
+
 type Collider interface {
 	GetCollider() *ColliderImpl
 }
@@ -21,9 +23,9 @@ func (c *ColliderImpl) GetCollider() *ColliderImpl {
 	return c
 }
 
-func (c *ColliderImpl) CollidesWith(other *ColliderImpl) bool {
-	return c.Px < other.Px+other.Width &&
-		c.Px+c.Width > other.Px &&
-		c.Py < other.Py+other.Height &&
-		c.Py+c.Height > other.Py
+func GetCollider(e golem.Entity) *ColliderImpl {
+	if c, ok := e.(Collider); ok {
+		return c.GetCollider()
+	}
+	return nil
 }

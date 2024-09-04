@@ -14,39 +14,34 @@ func NewControls() *Controls {
 }
 
 func (c *Controls) Update(e golem.Entity, w golem.World) {
-	ctrl, ok := e.(component.Controls)
-	if !ok {
+	controls := component.GetControls(e)
+	if controls == nil {
 		return
 	}
-	controls := ctrl.GetControl()
 
-	vel, ok := e.(component.Velocity)
-	if !ok {
+	velocity := component.GetVelocity(e)
+	if velocity != nil {
+		if ebiten.IsKeyPressed(controls.Up) {
+			velocity.Y = -controls.Velocity
+		} else if ebiten.IsKeyPressed(controls.Down) {
+			velocity.Y = controls.Velocity
+		} else {
+			velocity.Y = 0
+		}
+
+		if ebiten.IsKeyPressed(controls.Left) {
+			velocity.X = -controls.Velocity
+		} else if ebiten.IsKeyPressed(controls.Right) {
+			velocity.X = controls.Velocity
+		} else {
+			velocity.X = 0
+		}
+	}
+
+	shoot := component.GetShoot(e)
+	if shoot == nil {
 		return
 	}
-	velocity := vel.GetVelocity()
-
-	if ebiten.IsKeyPressed(controls.Up) {
-		velocity.Y = -controls.Velocity
-	} else if ebiten.IsKeyPressed(controls.Down) {
-		velocity.Y = controls.Velocity
-	} else {
-		velocity.Y = 0
-	}
-
-	if ebiten.IsKeyPressed(controls.Left) {
-		velocity.X = -controls.Velocity
-	} else if ebiten.IsKeyPressed(controls.Right) {
-		velocity.X = controls.Velocity
-	} else {
-		velocity.X = 0
-	}
-
-	sh, ok := e.(component.Shoot)
-	if !ok {
-		return
-	}
-	shoot := sh.GetShoot()
 
 	shoot.Shooting = false
 	if ebiten.IsKeyPressed(controls.Fire) {

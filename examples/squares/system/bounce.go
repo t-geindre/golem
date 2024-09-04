@@ -17,45 +17,37 @@ func NewBounce(bx, by float64) *Bounce {
 }
 
 func (s *Bounce) Update(e golem.Entity, w golem.World) {
-	if pos, vel, ok := s.checkEntity(e); ok {
-		mx, my := 0, 0
-		if sp, ok := e.(component.Sprite); ok {
-			spr := sp.GetSprite()
-			mx, my = spr.Img.Bounds().Dx()/2, spr.Img.Bounds().Dy()/2
-		}
+	pos := component.GetPosition(e)
+	vel := component.GetVelocity(e)
 
-		if pos.X < float64(mx) {
-			pos.X = float64(mx)
-			vel.X = -vel.X
-		}
-
-		if pos.Y < float64(my) {
-			pos.Y = float64(my)
-			vel.Y = -vel.Y
-		}
-
-		if pos.X > s.bx-float64(mx) {
-			pos.X = s.bx - float64(mx)
-			vel.X = -vel.X
-		}
-
-		if pos.Y > s.by-float64(my) {
-			pos.Y = s.by - float64(my)
-			vel.Y = -vel.Y
-		}
-	}
-}
-
-func (s *Bounce) checkEntity(e golem.Entity) (*component.PositionImpl, *component.VelocityImpl, bool) {
-	pos, ok := e.(component.Position)
-	if !ok {
-		return nil, nil, false
+	if pos == nil || vel == nil {
+		return
 	}
 
-	vel, ok := e.(component.Velocity)
-	if !ok {
-		return nil, nil, false
+	mx, my := 0, 0
+	sp := component.GetSprite(e)
+	if sp != nil {
+		spr := sp.GetSprite()
+		mx, my = spr.Img.Bounds().Dx()/2, spr.Img.Bounds().Dy()/2
 	}
 
-	return pos.GetPosition(), vel.GetVelocity(), true
+	if pos.X < float64(mx) {
+		pos.X = float64(mx)
+		vel.X = -vel.X
+	}
+
+	if pos.Y < float64(my) {
+		pos.Y = float64(my)
+		vel.Y = -vel.Y
+	}
+
+	if pos.X > s.bx-float64(mx) {
+		pos.X = s.bx - float64(mx)
+		vel.X = -vel.X
+	}
+
+	if pos.Y > s.by-float64(my) {
+		pos.Y = s.by - float64(my)
+		vel.Y = -vel.Y
+	}
 }

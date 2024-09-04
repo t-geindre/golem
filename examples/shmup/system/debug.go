@@ -49,15 +49,16 @@ func (d *Debug) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
 		return
 	}
 
-	if hb, ok := e.(component.Collider); ok {
-		hitbox := hb.GetCollider()
-		vector.StrokeRect(screen, float32(hitbox.Px), float32(hitbox.Py), float32(hitbox.Width), float32(hitbox.Height), 1, color.RGBA{
-			R: 0xff,
-			B: 0xff,
-			A: 0xff,
-		}, false)
+	hitbox := component.GetCollider(e)
+	if hitbox == nil {
+		return
 	}
 
+	vector.StrokeRect(screen, float32(hitbox.Px), float32(hitbox.Py), float32(hitbox.Width), float32(hitbox.Height), 1, color.RGBA{
+		R: 0xff,
+		B: 0xff,
+		A: 0xff,
+	}, false)
 }
 
 func (d *Debug) GetLayer() golem.LayerID {

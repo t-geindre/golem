@@ -1,6 +1,9 @@
 package component
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/t-geindre/golem/pkg/golem"
+)
 
 type Controls interface {
 	GetControl() *ControlsImpl
@@ -28,4 +31,11 @@ type ControlsImpl struct {
 
 func (c *ControlsImpl) GetControl() *ControlsImpl {
 	return c
+}
+
+func GetControls(e golem.Entity) *ControlsImpl {
+	if c, ok := e.(Controls); ok {
+		return c.GetControl()
+	}
+	return nil
 }

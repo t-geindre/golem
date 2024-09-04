@@ -35,3 +35,10 @@ func NewShoot(rate time.Duration, x, y float64, spawn BulletSpawn, l golem.Layer
 func (s *ShootImpl) GetShoot() *ShootImpl {
 	return s
 }
+
+func GetShoot(e golem.Entity) *ShootImpl {
+	if s, ok := e.(Shoot); ok {
+		return s.GetShoot()
+	}
+	return nil
+}
