@@ -14,10 +14,10 @@ type Updater interface {
 }
 
 type DrawerOnce interface {
-	Draw(screen *ebiten.Image, w World)
+	DrawOnce(screen *ebiten.Image, w World)
 	GetLayer() LayerID
 }
 
 type UpdaterOnce interface {
-	Update(w World)
+	UpdateOnce(w World)
 }

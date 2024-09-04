@@ -10,6 +10,9 @@ type World interface {
 	RemoveLayer(layer LayerID)
 	AddEntity(e Entity)
 	RemoveEntity(e Entity)
+	GetEntities(layer LayerID) []Entity
+	GetLayers() []LayerID
+	Size() int
 	Flush()
 	AddSystem(s System)
 	RemoveSystem(s System)
@@ -21,6 +24,7 @@ type world struct {
 	layers       []LayerID
 	ids          EntityID
 	entities     map[LayerID][]Entity
+	eCount       int
 	drawers      []Drawer
 	drawersOnce  map[LayerID][]DrawerOnce
 	updaters     []Updater
@@ -46,6 +50,8 @@ func (w *world) Clear() {
 	w.updatersOnce = make([]UpdaterOnce, 0)
 
 	w.delayed = make([]func(), 0)
+
+	w.eCount = 0
 }
 
 func (w *world) AddLayers(layers ...LayerID) {
@@ -72,12 +78,17 @@ func (w *world) RemoveLayer(layer LayerID) {
 	}
 }
 
+func (w *world) GetLayers() []LayerID {
+	return w.layers
+}
+
 func (w *world) AddEntity(e Entity) {
 	w.delayed = append(w.delayed, func() {
 		w.ids++
 		e.setId(w.ids)
 		w.AddLayers(e.GetLayer())
 		w.entities[e.GetLayer()] = append(w.entities[e.GetLayer()], e)
+		w.eCount++
 	})
 }
 
@@ -86,10 +97,19 @@ func (w *world) RemoveEntity(e Entity) {
 		for i, candidate := range w.entities[e.GetLayer()] {
 			if candidate.GetID() == e.GetID() {
 				w.entities[e.GetLayer()] = append(w.entities[e.GetLayer()][:i], w.entities[e.GetLayer()][i+1:]...)
+				w.eCount--
 				break
 			}
 		}
 	})
+}
+
+func (w *world) GetEntities(layer LayerID) []Entity {
+	return w.entities[layer]
+}
+
+func (w *world) Size() int {
+	return w.eCount
 }
 
 func (w *world) Flush() {
@@ -100,61 +120,66 @@ func (w *world) Flush() {
 }
 
 func (w *world) AddSystem(s System) {
-	switch sys := s.(type) {
-	case Drawer:
-		w.drawers = append(w.drawers, sys)
-	case Updater:
-		w.updaters = append(w.updaters, sys)
-	case DrawerOnce:
-		w.AddLayers(sys.GetLayer())
-		w.drawersOnce[sys.GetLayer()] = append(w.drawersOnce[sys.GetLayer()], sys)
-	case UpdaterOnce:
-		w.updatersOnce = append(w.updatersOnce, sys)
-	default:
-		panic("system must implement Drawer or Updater")
+	if d, ok := s.(Drawer); ok {
+		w.drawers = append(w.drawers, d)
+	}
+
+	if u, ok := s.(Updater); ok {
+		w.updaters = append(w.updaters, u)
+	}
+
+	if do, ok := s.(DrawerOnce); ok {
+		w.AddLayers(do.GetLayer())
+		w.drawersOnce[do.GetLayer()] = append(w.drawersOnce[do.GetLayer()], do)
+	}
+
+	if uo, ok := s.(UpdaterOnce); ok {
+		w.updatersOnce = append(w.updatersOnce, uo)
 	}
 }
 
 func (w *world) RemoveSystem(s System) {
-	switch sys := s.(type) {
-	case Drawer:
-		for i, d := range w.drawers {
-			if d == sys {
+	if d, ok := s.(Drawer); ok {
+		for i, c := range w.drawers {
+			if c == d {
 				w.drawers = append(w.drawers[:i], w.drawers[i+1:]...)
 				break
 			}
 		}
-	case Updater:
-		for i, u := range w.updaters {
-			if u == sys {
+	}
+
+	if u, ok := s.(Updater); ok {
+		for i, c := range w.updaters {
+			if c == u {
 				w.updaters = append(w.updaters[:i], w.updaters[i+1:]...)
 				break
 			}
 		}
-	case DrawerOnce:
-		for i, d := range w.drawersOnce[sys.GetLayer()] {
-			if d == sys {
-				w.drawersOnce[sys.GetLayer()] = append(w.drawersOnce[sys.GetLayer()][:i], w.drawersOnce[sys.GetLayer()][i+1:]...)
+	}
+
+	if do, ok := s.(DrawerOnce); ok {
+		for i, c := range w.drawersOnce[do.GetLayer()] {
+			if c == do {
+				w.drawersOnce[do.GetLayer()] = append(w.drawersOnce[do.GetLayer()][:i], w.drawersOnce[do.GetLayer()][i+1:]...)
 				break
 			}
 		}
-	case UpdaterOnce:
-		for i, u := range w.updatersOnce {
-			if u == sys {
+	}
+
+	if uo, ok := s.(UpdaterOnce); ok {
+		for i, c := range w.updatersOnce {
+			if c == uo {
 				w.updatersOnce = append(w.updatersOnce[:i], w.updatersOnce[i+1:]...)
 				break
 			}
-
 		}
-	default:
-		panic("system must implement Drawer or Updater")
 	}
 }
 
 func (w *world) Draw(screen *ebiten.Image) {
 	for _, layer := range w.layers {
 		for _, d := range w.drawersOnce[layer] {
-			d.Draw(screen, w)
+			d.DrawOnce(screen, w)
 		}
 		for _, e := range w.entities[layer] {
 			for _, d := range w.drawers {
@@ -166,6 +191,10 @@ func (w *world) Draw(screen *ebiten.Image) {
 
 func (w *world) Update() {
 	w.Flush()
+
+	for _, u := range w.updatersOnce {
+		u.UpdateOnce(w)
+	}
 
 	for _, layer := range w.layers {
 		for _, e := range w.entities[layer] {
