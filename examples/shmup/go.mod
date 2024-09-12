@@ -2,11 +2,9 @@ module github.com/t-geindre/golem/examples/shmup
 
 go 1.22.1
 
-replace github.com/t-geindre/golem => /home/tgeindre/www/golem
-
 require (
 	github.com/hajimehoshi/ebiten/v2 v2.7.9
-	github.com/t-geindre/golem v0.0.0-00010101000000-000000000000
+	github.com/t-geindre/golem v0.0.0-20240912110825-969aa282d7a2
 )
 
 require (
