@@ -8,9 +8,9 @@ import (
 
 type Square struct {
 	golem.Entity
-	component.Position
-	component.Velocity
-	component.Sprite
+	*component.Position
+	*component.Velocity
+	*component.Sprite
 }
 
 func NewSquare(l golem.LayerID, img *ebiten.Image, px, py, vx, vy float64) golem.Entity {

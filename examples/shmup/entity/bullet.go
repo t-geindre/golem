@@ -8,12 +8,12 @@ import (
 
 type Bullet struct {
 	golem.Entity
-	component.Sprite
-	component.Position
-	component.Velocity
-	component.Despawn
-	component.Collider
-	component.Life
+	*component.Sprite
+	*component.Position
+	*component.Velocity
+	*component.Despawn
+	*component.Collider
+	*component.Life
 }
 
 func NewBullet(l golem.LayerID) golem.Entity {

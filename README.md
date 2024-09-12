@@ -8,11 +8,18 @@ It uses [Ebiten engine](https://github.com/hajimehoshi/ebiten) as the rendering 
 
 This project **IS NOT** production ready, it needs more testing and benchmarks. 
 
-## Principles
+## Installation
+
+```bash
+go get github.com/t-geindre/golem
+go install github.com/t-geindre/golem/cmd/golem
+```
+
+## Usage
 
 ### Layers
 
-Golem uses a layer system. This allows to render and update entities in a specific order.
+Golem uses a layers system. This allows to render and update entities in a specific order.
 
 Layer are identified by `golem.LayerID` type, which is just an alias for `int`.
 
@@ -41,43 +48,23 @@ Layers are rendered and updated in the order they are added.
 
 Components are just data structures that store data. They should not have any logic.
 
-But, because retrieving a component on a entity is based on interfaces, you also have to provide an interface allowing to retrieve the component.
-
 This can be done as follows:
 
 ```go
 package component
 
-import "github.com/t-geindre/golem/pkg/golem"
-
-type Position interface {
-	GetPosition() *PositionImpl
-}
-
-type PositionImpl struct {
+//go:generate golem position.go
+type Position struct {
 	X, Y float64
 }
+```
 
-func NewPosition(x, y float64) Position {
-	return &PositionImpl{
-		X: x,
-		Y: y,
-	}
-}
+The `//go:generate golem position.go` comment  will generate a `position_golem.go` file containing the required code to retrieve components from entities.
 
-func (p *PositionImpl) GetPosition() *PositionImpl {
-	return p
-}
+Each time a new entity is created, the following command must be run:
 
-// The following function is optionnal but very usefull when 
-// you need to retrieve a component from an entity
-
-func GetPosition(e golem.Entity) *PositionImpl {
-	if p, ok := e.(Position); ok {
-		return p.GetPosition()
-	}
-	return nil
-}
+```bash
+$ go generate ./...
 ```
 
 ### Entities
@@ -87,20 +74,25 @@ Entities are just a collection of components. They must all embed the Golem enti
 ```go
 package entity
 
-import "github.com/t-geindre/golem/pkg/golem"
+import (
+	"github.com/t-geindre/golem/pkg/golem"
+	"component"
+)
 
 type Player struct {
 	golem.Entity
-	component.Position
+	*component.Position
 }
 
 func NewPlayer() *Player {
 	return &Player{
 		Entity:   golem.NewEntity(LayerPlayer), // This tells the engine to render and update the entity on the LayerPlayer
-		Position: component.NewPosition(0, 0),
+		Position: &component.Position{X: 100, Y: 100},
 	}
 }
 ```
+
+The component retrieval is based on interfaces, that's why all components must be embedded as pointer.
 
 ### Systems
 

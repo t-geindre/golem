@@ -8,12 +8,12 @@ import (
 
 type Enemy struct {
 	golem.Entity
-	component.Position
-	component.Velocity
-	component.Sprite
-	component.Despawn
-	component.Collider
-	component.Life
+	*component.Position
+	*component.Velocity
+	*component.Sprite
+	*component.Despawn
+	*component.Collider
+	*component.Life
 }
 
 func NewEnemy(l golem.LayerID, px, py float64) golem.Entity {

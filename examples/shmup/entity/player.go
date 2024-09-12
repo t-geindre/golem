@@ -10,14 +10,14 @@ import (
 
 type Player struct {
 	golem.Entity
-	component.Position
-	component.Velocity
-	component.Sprite
-	component.Controls
-	component.Shoot
-	component.Constraint
-	component.Collider
-	component.Life
+	*component.Position
+	*component.Velocity
+	*component.Sprite
+	*component.Controls
+	*component.Shoot
+	*component.Constraint
+	*component.Collider
+	*component.Life
 }
 
 func NewPlayer(l, bl golem.LayerID, px, py, cxMin, cxMax, cyMin, cyMax float64) golem.Entity {
