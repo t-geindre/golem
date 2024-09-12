@@ -3,29 +3,34 @@ package system
 import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/t-geindre/golem/pkg/golem"
+	"github.com/t-geindre/golem/pkg/golemutils"
+	"time"
 )
 
 type Debug struct {
 	l golem.LayerID
+	*golemutils.Panel
 }
 
-const margin = 5
+const (
+	margin = 5
+	cw     = 6
+	ch     = 16
+)
 
 func NewDebug(l golem.LayerID) *Debug {
-	return &Debug{l: l}
+	d := &Debug{l: l}
+	p := golemutils.NewPanel(l, d.refresh, time.Millisecond*100, golemutils.StickTopLeft)
+	d.Panel = p
+	return d
 }
 
-func (d *Debug) DrawOnce(screen *ebiten.Image, w golem.World) {
-	ebitenutil.DebugPrintAt(screen, fmt.Sprintf(
-		"FPS %.0f\nTPS %d\nEntities %d\n",
+func (d *Debug) refresh(w golem.World) string {
+	return fmt.Sprintf(
+		"FPS: %.2f TPS: %.2f\nEntities: %d",
 		ebiten.ActualFPS(),
-		ebiten.TPS(),
+		ebiten.ActualTPS(),
 		w.Size(),
-	), margin, margin)
-}
-
-func (d *Debug) GetLayer() golem.LayerID {
-	return d.l
+	)
 }

@@ -1,6 +1,6 @@
 package component
 
-//go:generate golem position.go
+//go:generate golem component Position
 type Position struct {
 	X, Y float64
 }

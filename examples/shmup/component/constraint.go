@@ -1,6 +1,6 @@
 package component
 
-//go:generate golem constraint.go
+//go:generate golem component Constraint
 type Constraint struct {
 	XMin, XMax float64
 	YMin, YMax float64

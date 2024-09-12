@@ -10,5 +10,7 @@ type Sprite struct {
 }
 
 func NewSprite(img *ebiten.Image) *Sprite {
-	return &Sprite{Img: img}
+	return &Sprite{
+		Img: img,
+	}
 }

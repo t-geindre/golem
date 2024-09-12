@@ -34,7 +34,7 @@ func NewPlayer(l, bl golem.LayerID, px, py, cxMin, cxMax, cyMin, cyMax float64) 
 			ebiten.KeySpace,
 			5,
 		),
-		Shoot:      component.NewShoot(time.Millisecond*115, 0, -5, NewBullet, bl),
+		Shoot:      component.NewShoot(time.Millisecond*150, 0, -5, NewBullet, bl),
 		Constraint: component.NewConstraint(cxMin, cxMax, cyMin, cyMax),
 		Collider:   component.NewCollider(-7, -9, 16, 20),
 		Life:       component.NewLife(5),

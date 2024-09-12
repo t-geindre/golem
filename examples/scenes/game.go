@@ -3,16 +3,14 @@ package main
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/pkg/golem"
-	"image"
 )
 
 type Game struct {
-	w    golem.World
-	rect *image.Point
+	w golem.World
 }
 
-func NewGame(w golem.World, rect *image.Point) *Game {
-	return &Game{w: w, rect: rect}
+func NewGame(w golem.World) *Game {
+	return &Game{w: w}
 }
 
 func (g *Game) Update() error {
@@ -25,6 +23,5 @@ func (g *Game) Draw(screen *ebiten.Image) {
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	g.rect.X, g.rect.Y = outsideWidth, outsideHeight
 	return outsideWidth, outsideHeight
 }

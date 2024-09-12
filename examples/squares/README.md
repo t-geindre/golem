@@ -1,1 +1,0 @@
-Demonstrate the engine running with a lot of entities (5K).

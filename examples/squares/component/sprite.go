@@ -4,7 +4,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-//go:generate golem sprite.go
+//go:generate golem component Sprite
 type Sprite struct {
 	Img *ebiten.Image
 	Opt *ebiten.DrawImageOptions

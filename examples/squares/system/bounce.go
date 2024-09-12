@@ -3,16 +3,16 @@ package system
 import (
 	"github.com/t-geindre/golem/examples/squares/component"
 	"github.com/t-geindre/golem/pkg/golem"
+	"image"
 )
 
 type Bounce struct {
-	bx, by float64
+	rect *image.Point
 }
 
-func NewBounce(bx, by float64) *Bounce {
+func NewBounce(rect *image.Point) *Bounce {
 	return &Bounce{
-		bx: bx,
-		by: by,
+		rect: rect,
 	}
 }
 
@@ -41,13 +41,13 @@ func (s *Bounce) Update(e golem.Entity, w golem.World) {
 		vel.Y = -vel.Y
 	}
 
-	if pos.X > s.bx-float64(mx) {
-		pos.X = s.bx - float64(mx)
+	if pos.X > float64(s.rect.X-mx) {
+		pos.X = float64(s.rect.X - mx)
 		vel.X = -vel.X
 	}
 
-	if pos.Y > s.by-float64(my) {
-		pos.Y = s.by - float64(my)
+	if pos.Y > float64(s.rect.Y-my) {
+		pos.Y = float64(s.rect.Y - my)
 		vel.Y = -vel.Y
 	}
 }

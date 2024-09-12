@@ -4,7 +4,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-//go:generate golem controls.go
+//go:generate golem component Controls
 type Controls struct {
 	Up       ebiten.Key
 	Down     ebiten.Key

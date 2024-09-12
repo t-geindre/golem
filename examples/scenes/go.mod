@@ -1,10 +1,10 @@
-module github.com/t-geindre/golem/examples/shmup
+module github.com/t-geindre/golem/examples/scenes
 
 go 1.22.1
 
 require (
 	github.com/hajimehoshi/ebiten/v2 v2.7.9
-	github.com/t-geindre/golem v0.0.0-20240912110825-969aa282d7a2
+	github.com/t-geindre/golem v0.0.0-20240912111835-33a0a3495a47
 )
 
 require (

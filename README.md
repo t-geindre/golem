@@ -2,7 +2,8 @@
 
 > GO Language Entity Management
 
-This is an attempt to create a simple [ECS system](https://en.wikipedia.org/wiki/Entity_component_system) based on interfaces.
+This is an attempt to create a simple [ECS system](https://en.wikipedia.org/wiki/Entity_component_system) based on
+interfaces and some code generation.
 
 It uses [Ebiten engine](https://github.com/hajimehoshi/ebiten) as the rendering engine.
 
@@ -11,8 +12,8 @@ This project **IS NOT** production ready, it needs more testing and benchmarks.
 ## Installation
 
 ```bash
-go get github.com/t-geindre/golem
-go install github.com/t-geindre/golem/cmd/golem
+$ go get github.com/t-geindre/golem
+$ go install github.com/t-geindre/golem/cmd/golem
 ```
 
 ## Usage
@@ -21,7 +22,7 @@ go install github.com/t-geindre/golem/cmd/golem
 
 Golem uses a layers system. This allows to render and update entities in a specific order.
 
-Layer are identified by `golem.LayerID` type, which is just an alias for `int`.
+Layers are identified by a `golem.LayerID` type, which is just an alias for `int`.
 
 You can define layers as follows:
 
@@ -58,6 +59,8 @@ type Position struct {
 	X, Y float64
 }
 ```
+
+All components must be public (starting with an uppercase letter)
 
 The `//go:generate golem position.go` comment  will generate a `position_golem.go` file containing the required code to retrieve components from entities.
 
