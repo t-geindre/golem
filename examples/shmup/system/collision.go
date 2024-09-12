@@ -53,17 +53,9 @@ func (c *Collision) Update(left golem.Entity, w golem.World) {
 	}
 }
 
-func (c *Collision) collides(l, r *component.ColliderImpl) bool {
+func (c *Collision) collides(l, r *component.Collider) bool {
 	return l.Px < r.Px+r.Width &&
 		l.Px+l.Width > r.Px &&
 		l.Py < r.Py+r.Height &&
 		l.Py+l.Height > r.Py
-}
-
-func (c *Collision) getCollider(e golem.Entity) *component.ColliderImpl {
-	col, ok := e.(component.Collider)
-	if !ok {
-		return nil
-	}
-	return col.GetCollider()
 }
