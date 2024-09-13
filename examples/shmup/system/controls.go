@@ -36,6 +36,11 @@ func (c *Controls) Update(e golem.Entity, w golem.World) {
 		} else {
 			velocity.X = 0
 		}
+
+		if velocity.X != 0 && velocity.Y != 0 {
+			velocity.X *= 0.70710678118
+			velocity.Y *= 0.70710678118
+		}
 	}
 
 	shoot := component.GetShoot(e)

@@ -5,7 +5,7 @@ const (
 	DespawnDirectionDown
 )
 
-//go:generate golem despawn.go
+//go:generate golem component Despawn
 type Despawn struct {
 	Direction int
 }

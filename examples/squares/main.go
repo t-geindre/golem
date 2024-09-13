@@ -2,16 +2,15 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/t-geindre/golem/examples/squares/entity"
-	"github.com/t-geindre/golem/examples/squares/helper"
 	"github.com/t-geindre/golem/examples/squares/system"
 	"github.com/t-geindre/golem/pkg/golem"
-	"math/rand"
+	"github.com/t-geindre/golem/pkg/golemutils"
+	"image"
+	"time"
 )
 
 func main() {
-	const wWidth, wHeight = 1000, 1000
-	const nbSquares = 5000
+	winSize := &image.Point{X: 1000, Y: 1000}
 
 	const (
 		LayerSquares = iota
@@ -19,28 +18,19 @@ func main() {
 	)
 
 	ebiten.SetWindowTitle("Golem example - Squares")
-	ebiten.SetWindowSize(wWidth, wHeight)
+	ebiten.SetWindowSize(winSize.X, winSize.Y)
+	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetVsyncEnabled(false)
 
 	w := golem.NewWorld()
 
 	w.AddLayers(LayerSquares, LayerDebug)
 
-	w.AddSystem(system.NewBounce(wWidth, wHeight))
+	w.AddSystem(system.NewBounce(winSize))
 	w.AddSystem(system.NewMove())
 	w.AddSystem(system.NewRenderer())
-	w.AddSystem(system.NewDebug(LayerDebug))
+	w.AddSystem(golemutils.NewMetrics(LayerDebug, time.Millisecond*100))
+	w.AddSystem(system.NewSpawner(LayerSquares, LayerDebug, winSize))
 
-	for i := 0; i < nbSquares; i++ {
-		s := entity.NewSquare(
-			LayerSquares,
-			helper.Assets[i%len(helper.Assets)],
-			rand.Float64()*wWidth, rand.Float64()*wHeight,
-			rand.Float64()*2-1, rand.Float64()*2-1,
-		)
-
-		w.AddEntity(s)
-	}
-
-	ebiten.RunGame(NewGame(w))
+	ebiten.RunGame(NewGame(w, winSize))
 }

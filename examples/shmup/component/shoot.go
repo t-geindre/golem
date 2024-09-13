@@ -7,7 +7,7 @@ import (
 
 type BulletSpawn func(id golem.LayerID) golem.Entity
 
-//go:generate golem shoot.go
+//go:generate golem component Shoot
 type Shoot struct {
 	Shooting bool
 	Rate     time.Duration

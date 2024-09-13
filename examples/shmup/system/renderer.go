@@ -23,8 +23,8 @@ func (r *Renderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
 
 	hw, hh := sprite.Img.Bounds().Dx()/2, sprite.Img.Bounds().Dy()/2
 
-	sprite.Opt.GeoM.Reset()
-	sprite.Opt.GeoM.Translate(position.X-float64(hw), position.Y-float64(hh))
+	opt := &ebiten.DrawImageOptions{}
+	opt.GeoM.Translate(position.X-float64(hw), position.Y-float64(hh))
 
-	screen.DrawImage(sprite.Img, sprite.Opt)
+	screen.DrawImage(sprite.Img, opt)
 }

@@ -1,6 +1,6 @@
 package component
 
-//go:generate golem life.go
+//go:generate golem component Life
 type Life struct {
 	Max, Current int
 }

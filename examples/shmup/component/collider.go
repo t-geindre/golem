@@ -1,6 +1,6 @@
 package component
 
-//go:generate golem collider.go
+//go:generate golem component Collider
 type Collider struct {
 	Px, Py, ShiftX, ShiftY, Width, Height float64
 }

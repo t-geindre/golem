@@ -1,6 +1,6 @@
 package component
 
-//go:generate golem velocity.go
+//go:generate golem component Velocity
 type Velocity struct {
 	X, Y float64
 }
