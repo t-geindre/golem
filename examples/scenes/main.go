@@ -6,19 +6,24 @@ import (
 	"github.com/t-geindre/golem/examples/scenes/entity"
 	"github.com/t-geindre/golem/examples/scenes/system"
 	"github.com/t-geindre/golem/pkg/golem"
+	"github.com/t-geindre/golem/pkg/golemutils"
+	"time"
 )
 
 func main() {
 	const margin = 150
 	const wWidth, wHeight = assets.Size + margin*2, assets.Size + margin*2
-	const LayerAll = iota
+	const (
+		LayerAll = iota
+		LayerDebug
+	)
 
 	ebiten.SetWindowTitle("Golem example - Scenes")
 	ebiten.SetWindowSize(wWidth, wHeight)
 	ebiten.SetVsyncEnabled(false)
 
 	w := golem.NewWorld()
-	w.AddLayers(LayerAll)
+	w.AddLayers(LayerAll, LayerDebug)
 
 	scenes := make([]golem.Entity, 0)
 	for name, gopher := range map[string]golem.Entity{
@@ -35,7 +40,8 @@ func main() {
 		scenes = append(scenes, scene)
 	}
 
-	w.AddSystem(system.NewScene(scenes...))
+	w.AddSystem(system.NewScene(LayerDebug, scenes...))
+	w.AddSystem(golemutils.NewMetrics(LayerDebug, time.Millisecond*100))
 
 	ebiten.RunGame(NewGame(w))
 }

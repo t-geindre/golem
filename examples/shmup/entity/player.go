@@ -21,11 +21,14 @@ type Player struct {
 }
 
 func NewPlayer(l, bl golem.LayerID, px, py, cxMin, cxMax, cyMin, cyMax float64) golem.Entity {
+	img := helper.Assets["player"]
+	w, h := float64(img.Bounds().Dx())*.7, float64(img.Bounds().Dy())*.8
+
 	return &Player{
 		Entity:   golem.NewEntity(l),
 		Position: component.NewPosition(px, py),
 		Velocity: component.NewVelocity(0, 0),
-		Sprite:   component.NewSprite(helper.Assets["player"]),
+		Sprite:   component.NewSprite(img),
 		Controls: component.NewControls(
 			ebiten.KeyUp,
 			ebiten.KeyDown,
@@ -34,9 +37,9 @@ func NewPlayer(l, bl golem.LayerID, px, py, cxMin, cxMax, cyMin, cyMax float64) 
 			ebiten.KeySpace,
 			5,
 		),
-		Shoot:      component.NewShoot(time.Millisecond*150, 0, -5, NewBullet, bl),
+		Shoot:      component.NewShoot(time.Millisecond*150, 0, -h*.7, NewBullet, bl),
 		Constraint: component.NewConstraint(cxMin, cxMax, cyMin, cyMax),
-		Collider:   component.NewCollider(-7, -9, 16, 20),
+		Collider:   component.NewCollider(-(w / 2), -(h / 2), w, h),
 		Life:       component.NewLife(5),
 	}
 }

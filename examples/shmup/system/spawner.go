@@ -33,9 +33,8 @@ func (s *Spawner) UpdateOnce(w golem.World) {
 		s.last = time.Now()
 		e := s.spawn(s.layer, s.xMin+rand.Float64()*(s.xMax-s.xMin), s.y)
 		w.AddEntity(e)
-		s.rate -= 10 * time.Millisecond
-		if s.rate < 50*time.Millisecond {
-			s.rate = 50 * time.Millisecond
+		if s.rate > 100*time.Millisecond {
+			s.rate -= 10 * time.Millisecond
 		}
 	}
 }

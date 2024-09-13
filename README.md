@@ -64,7 +64,7 @@ All components must be public (starting with an uppercase letter)
 
 The `//go:generate golem position.go` comment  will generate a `position_golem.go` file containing the required code to retrieve components from entities.
 
-Each time a new entity is created, the following command must be run:
+Each time a new component is created, the following command must be run:
 
 ```bash
 $ go generate ./...
@@ -101,7 +101,6 @@ The component retrieval is based on interfaces, that's why all components must b
 
 TODO
 
-### Layers
+## Examples
 
-
-TODO
+See the [examples](./examples) directory.

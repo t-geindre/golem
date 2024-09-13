@@ -1,7 +1,7 @@
 package system
 
 import (
-	"github.com/t-geindre/golem/examples/scenes/component"
+	"github.com/t-geindre/golem/examples/shmup/component"
 	"github.com/t-geindre/golem/pkg/golem"
 	"time"
 )

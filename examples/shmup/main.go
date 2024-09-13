@@ -6,6 +6,7 @@ import (
 	"github.com/t-geindre/golem/examples/shmup/helper"
 	"github.com/t-geindre/golem/examples/shmup/system"
 	"github.com/t-geindre/golem/pkg/golem"
+	"github.com/t-geindre/golem/pkg/golemutils"
 	"time"
 )
 
@@ -38,10 +39,16 @@ func main() {
 	w.AddSystem(system.NewConstraint())
 	w.AddSystem(system.NewCollision(collisionRules))
 	w.AddSystem(system.NewDespawner(0, wHeight, 10))
+	w.AddSystem(system.NewAnimation())
 	w.AddSystem(system.NewRenderer())
 	w.AddSystem(system.NewDebug(LayerDebug))
+	w.AddSystem(golemutils.NewMetrics(LayerDebug, time.Millisecond*100))
 
-	w.AddEntity(entity.NewPlayer(LayerPlayer, LayerBullets, wWidth/2, wHeight-50, 10, wWidth-10, 10, wHeight-10))
+	w.AddEntity(entity.NewPlayer(
+		LayerPlayer, LayerBullets, wWidth/2, wHeight-50,
+		// TODO Constraint needs improvement, this is not flexible at all
+		10*helper.Scale, wWidth-10*helper.Scale, 10*helper.Scale, wHeight-10*helper.Scale,
+	))
 
 	ebiten.RunGame(NewGame(w))
 }

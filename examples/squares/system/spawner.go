@@ -1,10 +1,12 @@
 package system
 
 import (
+	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/examples/squares/entity"
 	"github.com/t-geindre/golem/examples/squares/helper"
 	"github.com/t-geindre/golem/pkg/golem"
+	"github.com/t-geindre/golem/pkg/golemutils"
 	"image"
 	"math/rand"
 	"time"
@@ -16,21 +18,28 @@ type Spawner struct {
 	layer golem.LayerID
 	rect  *image.Point
 	count int
+	*golemutils.Panel
 }
 
-func NewSpawner(l golem.LayerID, rect *image.Point) *Spawner {
-	return &Spawner{
+func NewSpawner(sl, dl golem.LayerID, rect *image.Point) *Spawner {
+	s := &Spawner{
 		rate:  1,
-		layer: l,
+		layer: sl,
 		rect:  rect,
 	}
+	s.Panel = golemutils.NewPanel(dl, s.getDisplay, golemutils.RefreshOnce)
+	s.Stick = golemutils.StickTopRight
+	return s
 }
 
 func (s *Spawner) UpdateOnce(w golem.World) {
 	_, y := ebiten.Wheel()
-	s.rate += int(y * 5)
-	if s.rate < 1 {
-		s.rate = 1
+	if y != 0 {
+		s.rate += int(y * 5)
+		if s.rate < 1 {
+			s.rate = 1
+		}
+		s.Panel.Refresh(w)
 	}
 
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
@@ -60,4 +69,10 @@ func (s *Spawner) UpdateOnce(w golem.World) {
 			}
 		}
 	}
+
+	s.Panel.UpdateOnce(w)
+}
+
+func (s *Spawner) getDisplay(w golem.World) string {
+	return fmt.Sprintf("Amount: %d [MW] +/-\n[LMB]/[RMB] Add/Remove", s.rate)
 }
