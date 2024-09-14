@@ -3,7 +3,6 @@ package main
 import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/examples/squares/system"
-	"github.com/t-geindre/golem/pkg/golem"
 	"github.com/t-geindre/golem/pkg/golemutils"
 	"image"
 	"time"
@@ -22,15 +21,15 @@ func main() {
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetVsyncEnabled(false)
 
-	w := golem.NewWorld()
+	g := NewGame(winSize)
 
-	w.AddLayers(LayerSquares, LayerDebug)
+	g.World.AddLayers(LayerSquares, LayerDebug)
 
-	w.AddSystem(system.NewBounce(winSize))
-	w.AddSystem(system.NewMove())
-	w.AddSystem(system.NewRenderer())
-	w.AddSystem(golemutils.NewMetrics(LayerDebug, time.Millisecond*100))
-	w.AddSystem(system.NewSpawner(LayerSquares, LayerDebug, winSize))
+	g.World.AddSystem(system.NewBounce(winSize))
+	g.World.AddSystem(system.NewMove())
+	g.World.AddSystem(system.NewRenderer())
+	g.World.AddSystem(golemutils.NewMetrics(LayerDebug, time.Millisecond*100))
+	g.World.AddSystem(system.NewSpawner(LayerSquares, LayerDebug, winSize))
 
-	ebiten.RunGame(NewGame(w, winSize))
+	ebiten.RunGame(g)
 }

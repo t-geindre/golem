@@ -7,7 +7,7 @@ interfaces and some code generation.
 
 It uses [Ebiten engine](https://github.com/hajimehoshi/ebiten) as the rendering engine.
 
-This project **IS NOT** production ready, it needs more testing and benchmarks. 
+This project is still a work in progress and **IS NOT** production ready, it needs more testing and benchmarks. 
 
 ## Installation
 
@@ -54,7 +54,7 @@ This can be done as follows:
 ```go
 package component
 
-//go:generate golem position.go
+//go:generate golem component Position
 type Position struct {
 	X, Y float64
 }
@@ -62,7 +62,7 @@ type Position struct {
 
 All components must be public (starting with an uppercase letter)
 
-The `//go:generate golem position.go` comment  will generate a `position_golem.go` file containing the required code to retrieve components from entities.
+The `///go:generate golem component Position` comment  will generate a `position_golem.go` file containing the required code to retrieve components from entities.
 
 Each time a new component is created, the following command must be run:
 
@@ -98,6 +98,10 @@ func NewPlayer() *Player {
 The component retrieval is based on interfaces, that's why all components must be embedded as pointer.
 
 ### Systems
+
+TODO
+
+## Utils
 
 TODO
 

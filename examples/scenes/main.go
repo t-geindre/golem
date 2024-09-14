@@ -22,8 +22,8 @@ func main() {
 	ebiten.SetWindowSize(wWidth, wHeight)
 	ebiten.SetVsyncEnabled(false)
 
-	w := golem.NewWorld()
-	w.AddLayers(LayerAll, LayerDebug)
+	g := golemutils.NewGame()
+	g.World.AddLayers(LayerAll, LayerDebug)
 
 	scenes := make([]golem.Entity, 0)
 	for name, gopher := range map[string]golem.Entity{
@@ -40,8 +40,8 @@ func main() {
 		scenes = append(scenes, scene)
 	}
 
-	w.AddSystem(system.NewScene(LayerDebug, scenes...))
-	w.AddSystem(golemutils.NewMetrics(LayerDebug, time.Millisecond*100))
+	g.World.AddSystem(system.NewScene(LayerDebug, scenes...))
+	g.World.AddSystem(golemutils.NewMetrics(LayerDebug, time.Millisecond*100))
 
-	ebiten.RunGame(NewGame(w))
+	ebiten.RunGame(g)
 }

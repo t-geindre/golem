@@ -5,7 +5,6 @@ import (
 	"github.com/t-geindre/golem/examples/shmup/entity"
 	"github.com/t-geindre/golem/examples/shmup/helper"
 	"github.com/t-geindre/golem/examples/shmup/system"
-	"github.com/t-geindre/golem/pkg/golem"
 	"github.com/t-geindre/golem/pkg/golemutils"
 	"time"
 )
@@ -23,32 +22,32 @@ func main() {
 	ebiten.SetWindowSize(wWidth, wHeight)
 	ebiten.SetVsyncEnabled(false)
 
-	w := golem.NewWorld()
+	g := golemutils.NewGame()
 
-	w.AddLayers(LayerEnemies, LayerPlayer, LayerBullets, LayerDebug)
+	g.World.AddLayers(LayerEnemies, LayerPlayer, LayerBullets, LayerDebug)
 
 	collisionRules := []system.CollisionRule{
 		{LayerEnemies, LayerBullets, helper.Damage},
 		{LayerEnemies, LayerPlayer, helper.Damage},
 	}
 
-	w.AddSystem(system.NewSpawner(LayerEnemies, 20, wWidth-20, 0, entity.NewEnemy, time.Millisecond*500))
-	w.AddSystem(system.NewControls())
-	w.AddSystem(system.NewShoot())
-	w.AddSystem(system.NewMove())
-	w.AddSystem(system.NewConstraint())
-	w.AddSystem(system.NewCollision(collisionRules))
-	w.AddSystem(system.NewDespawner(0, wHeight, 10))
-	w.AddSystem(system.NewAnimation())
-	w.AddSystem(system.NewRenderer())
-	w.AddSystem(system.NewDebug(LayerDebug))
-	w.AddSystem(golemutils.NewMetrics(LayerDebug, time.Millisecond*100))
+	g.World.AddSystem(system.NewSpawner(LayerEnemies, 20, wWidth-20, 0, entity.NewEnemy, time.Millisecond*500))
+	g.World.AddSystem(system.NewControls())
+	g.World.AddSystem(system.NewShoot())
+	g.World.AddSystem(system.NewMove())
+	g.World.AddSystem(system.NewConstraint())
+	g.World.AddSystem(system.NewCollision(collisionRules))
+	g.World.AddSystem(system.NewDespawner(0, wHeight, 10))
+	g.World.AddSystem(system.NewAnimation())
+	g.World.AddSystem(system.NewRenderer())
+	g.World.AddSystem(system.NewDebug(LayerDebug))
+	g.World.AddSystem(golemutils.NewMetrics(LayerDebug, time.Millisecond*100))
 
-	w.AddEntity(entity.NewPlayer(
+	g.World.AddEntity(entity.NewPlayer(
 		LayerPlayer, LayerBullets, wWidth/2, wHeight-50,
 		// TODO Constraint needs improvement, this is not flexible at all
 		10*helper.Scale, wWidth-10*helper.Scale, 10*helper.Scale, wHeight-10*helper.Scale,
 	))
 
-	ebiten.RunGame(NewGame(w))
+	ebiten.RunGame(g)
 }

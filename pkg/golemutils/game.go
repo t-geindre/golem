@@ -1,4 +1,4 @@
-package main
+package golemutils
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
@@ -6,20 +6,20 @@ import (
 )
 
 type Game struct {
-	w golem.World
+	World golem.World
 }
 
-func NewGame(w golem.World) *Game {
-	return &Game{w: w}
+func NewGame() *Game {
+	return &Game{World: golem.NewWorld()}
 }
 
 func (g *Game) Update() error {
-	g.w.Update()
+	g.World.Update()
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	g.w.Draw(screen)
+	g.World.Draw(screen)
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {

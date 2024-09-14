@@ -62,7 +62,7 @@ func (s *Scene) getCurrentScene(w golem.World) string {
 	c := s.scenes[s.current]
 	sc := component.GetScene(c)
 	if s != nil {
-		return fmt.Sprintf("Current scene : %s\n[LMB] Switch scene", sc.Name)
+		return fmt.Sprintf("[LMB] Switch scene\nCurrent scene : %s", sc.Name)
 	}
 	return ""
 }

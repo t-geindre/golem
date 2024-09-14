@@ -1,30 +1,21 @@
 package main
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/t-geindre/golem/pkg/golem"
+	"github.com/t-geindre/golem/pkg/golemutils"
 	"image"
 )
 
 type Game struct {
-	w    golem.World
+	*golemutils.Game
 	rect *image.Point
 }
 
-func NewGame(w golem.World, rect *image.Point) *Game {
-	return &Game{w: w, rect: rect}
-}
-
-func (g *Game) Update() error {
-	g.w.Update()
-	return nil
-}
-
-func (g *Game) Draw(screen *ebiten.Image) {
-	g.w.Draw(screen)
+func NewGame(rect *image.Point) *Game {
+	return &Game{Game: golemutils.NewGame(), rect: rect}
 }
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
+	// We need our own ebiten.Game implementation to keep track of the window size
 	g.rect.X, g.rect.Y = outsideWidth, outsideHeight
 	return outsideWidth, outsideHeight
 }
