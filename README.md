@@ -22,7 +22,7 @@ $ go install github.com/t-geindre/golem/cmd/golem
 
 Golem uses a layers system. This allows to render and update entities in a specific order.
 
-Layers are identified by a `golem.LayerID` type, which is just an alias for `int`.
+Layers are identified by a `golem.LayerID` type, which is just an alias for `uint8`.
 
 You can define layers as follows:
 

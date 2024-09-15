@@ -45,6 +45,7 @@ type Panel struct {
 }
 
 func NewPanel(layer golem.LayerID, refresh func(w golem.World) string, rate time.Duration) *Panel {
+	// Todo a panel should be an entity updated and drawn by a unique system
 	p := &Panel{
 		Str:        "",
 		Margin:     10,

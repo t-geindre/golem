@@ -11,6 +11,8 @@ type World interface {
 	AddEntity(e Entity)
 	RemoveEntity(e Entity)
 	GetEntities(layer LayerID) []Entity
+	SetParentEntity(e Entity)
+	GetParentEntity() Entity
 	GetLayers() []LayerID
 	Size() int
 	Flush()
@@ -24,7 +26,9 @@ type world struct {
 	layers       []LayerID
 	ids          EntityID
 	entities     map[LayerID][]Entity
+	parent       Entity
 	eCount       int
+	eChildCount  int
 	drawers      []Drawer
 	drawersOnce  map[LayerID][]DrawerOnce
 	updaters     []Updater
@@ -52,6 +56,7 @@ func (w *world) Clear() {
 	w.delayed = make([]func(), 0)
 
 	w.eCount = 0
+	w.eChildCount = 0
 }
 
 func (w *world) AddLayers(layers ...LayerID) {
@@ -108,8 +113,16 @@ func (w *world) GetEntities(layer LayerID) []Entity {
 	return w.entities[layer]
 }
 
+func (w *world) SetParentEntity(e Entity) {
+	w.parent = e
+}
+
+func (w *world) GetParentEntity() Entity {
+	return w.parent
+}
+
 func (w *world) Size() int {
-	return w.eCount
+	return w.eCount + w.eChildCount
 }
 
 func (w *world) Flush() {
@@ -182,6 +195,11 @@ func (w *world) Draw(screen *ebiten.Image) {
 			d.DrawOnce(screen, w)
 		}
 		for _, e := range w.entities[layer] {
+			if sw, ok := e.(World); ok {
+				sw.SetParentEntity(e)
+				sw.Draw(screen)
+				sw.SetParentEntity(nil)
+			}
 			for _, d := range w.drawers {
 				d.Draw(e, screen, w)
 			}
@@ -191,6 +209,7 @@ func (w *world) Draw(screen *ebiten.Image) {
 
 func (w *world) Update() {
 	w.Flush()
+	eChildCount := 0
 
 	for _, u := range w.updatersOnce {
 		u.UpdateOnce(w)
@@ -198,9 +217,17 @@ func (w *world) Update() {
 
 	for _, layer := range w.layers {
 		for _, e := range w.entities[layer] {
+			if sw, ok := e.(World); ok {
+				sw.SetParentEntity(e)
+				sw.Update()
+				sw.SetParentEntity(nil)
+				eChildCount += sw.Size()
+			}
 			for _, u := range w.updaters {
 				u.Update(e, w)
 			}
 		}
 	}
+
+	w.eChildCount = eChildCount
 }
