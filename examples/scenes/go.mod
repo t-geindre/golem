@@ -4,7 +4,7 @@ go 1.22.1
 
 require (
 	github.com/hajimehoshi/ebiten/v2 v2.7.9
-	github.com/t-geindre/golem v0.0.0-20240913115934-d709f043f901
+	github.com/t-geindre/golem v0.0.0-20240915202520-6651fe3f3a49
 )
 
 require (
@@ -16,4 +16,3 @@ require (
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
 )
-
