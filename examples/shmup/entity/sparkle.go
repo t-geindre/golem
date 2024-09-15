@@ -16,12 +16,12 @@ type Sparkle struct {
 	*component.Animation
 }
 
-func NewSparkle(l golem.LayerID, px, py float64) golem.Entity {
+func NewSparkle(l golem.LayerID) golem.Entity {
 	s := &Sparkle{
 		Entity:   golem.NewEntity(l),
-		Position: component.NewPosition(px, py),
+		Position: component.NewPosition(0, 0),
 		Velocity: component.NewVelocity(0, 2),
-		Sprite:   component.NewSprite(helper.Assets["sparkle_a"]),
+		Sprite:   component.NewSprite(helper.Assets["sparkle_f1"]),
 		Despawn:  component.NewDespawn(component.DespawnDirectionDown),
 		Animation: component.NewAnimation(
 			true,

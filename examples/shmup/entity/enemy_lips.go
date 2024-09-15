@@ -11,9 +11,9 @@ type EnemyLips struct {
 	*Enemy
 }
 
-func NewEnemyLips(l golem.LayerID, px, py float64) golem.Entity {
+func NewEnemyLips(l golem.LayerID) golem.Entity {
 	return &EnemyLips{
-		Enemy: NewEnemy(l, px, py,
+		Enemy: NewEnemy(l,
 			component.NewFrame(helper.Assets["en_lips_f1"], time.Millisecond*500),
 			component.NewFrame(helper.Assets["en_lips_f2"], time.Millisecond*50),
 			component.NewFrame(helper.Assets["en_lips_f3"], time.Millisecond*50),

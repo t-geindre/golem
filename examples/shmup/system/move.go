@@ -1,6 +1,7 @@
 package system
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/examples/shmup/component"
 	"github.com/t-geindre/golem/pkg/golem"
 )
@@ -23,22 +24,26 @@ func (s *Move) Update(e golem.Entity, w golem.World) {
 	pos.X += vel.X
 	pos.Y += vel.Y
 
-	constraint := component.GetConstraint(e)
-	if constraint != nil {
-		if pos.X < constraint.XMin {
-			pos.X = constraint.XMin
+	cs := component.GetConstraint(e)
+	if cs != nil {
+		ww, wh := ebiten.WindowSize()
+		maxX, maxY := float64(ww)-cs.W-cs.X, float64(wh)-cs.H-cs.Y
+		minX, minY := -cs.X, -cs.Y
+
+		if pos.X < minX {
+			pos.X = minX
 		}
 
-		if pos.X > constraint.XMax {
-			pos.X = constraint.XMax
+		if pos.X > maxX {
+			pos.X = maxX
 		}
 
-		if pos.Y < constraint.YMin {
-			pos.Y = constraint.YMin
+		if pos.Y < minY {
+			pos.Y = minY
 		}
 
-		if pos.Y > constraint.YMax {
-			pos.Y = constraint.YMax
+		if pos.Y > maxY {
+			pos.Y = maxY
 		}
 	}
 

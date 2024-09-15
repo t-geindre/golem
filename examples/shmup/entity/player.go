@@ -21,12 +21,18 @@ type Player struct {
 	*component.Animation
 }
 
-func NewPlayer(l, bl golem.LayerID, px, py, cxMin, cxMax, cyMin, cyMax float64) golem.Entity {
+func NewPlayer(l, bl golem.LayerID) golem.Entity {
+	ww, wh := ebiten.WindowSize()
+	sprite := helper.Assets["player_f1"]
+
+	px := float64(ww)/2 - float64(sprite.Bounds().Dx())/2
+	py := float64(wh) - float64(sprite.Bounds().Dy())
+
 	return &Player{
 		Entity:   golem.NewEntity(l),
 		Position: component.NewPosition(px, py),
 		Velocity: component.NewVelocity(0, 0),
-		Sprite:   component.NewSprite(helper.Assets["player_f1"]),
+		Sprite:   component.NewSprite(sprite),
 		Controls: component.NewControls(
 			ebiten.KeyUp,
 			ebiten.KeyDown,
@@ -36,7 +42,7 @@ func NewPlayer(l, bl golem.LayerID, px, py, cxMin, cxMax, cyMin, cyMax float64) 
 			5,
 		),
 		Shoot:      component.NewShoot(time.Millisecond*150, 0, -32, NewBullet, bl),
-		Constraint: component.NewConstraint(cxMin, cxMax, cyMin, cyMax),
+		Constraint: component.NewConstraint(-16, -32, 32, 32),
 		Collider:   component.NewCollider(-13, -29, 26, 26),
 		Life:       component.NewLife(5, NewExplosion),
 		Animation: component.NewAnimation(

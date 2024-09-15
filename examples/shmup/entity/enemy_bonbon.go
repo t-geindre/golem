@@ -11,9 +11,9 @@ type EnemyBonbon struct {
 	*Enemy
 }
 
-func NewEnemyBonbon(l golem.LayerID, px, py float64) golem.Entity {
+func NewEnemyBonbon(l golem.LayerID) golem.Entity {
 	return &EnemyBonbon{
-		Enemy: NewEnemy(l, px, py,
+		Enemy: NewEnemy(l,
 			component.NewFrame(helper.Assets["en_bonbon_f1"], time.Millisecond*500),
 			component.NewFrame(helper.Assets["en_bonbon_f2"], time.Millisecond*50),
 			component.NewFrame(helper.Assets["en_bonbon_f3"], time.Millisecond*50),

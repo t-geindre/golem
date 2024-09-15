@@ -16,10 +16,10 @@ type Enemy struct {
 	*component.Animation
 }
 
-func NewEnemy(l golem.LayerID, px, py float64, frames ...component.Frame) *Enemy {
+func NewEnemy(l golem.LayerID, frames ...component.Frame) *Enemy {
 	return &Enemy{
 		Entity:    golem.NewEntity(l),
-		Position:  component.NewPosition(px, py),
+		Position:  component.NewPosition(0, 0),
 		Velocity:  component.NewVelocity(0, 3),
 		Sprite:    component.NewSprite(frames[0].Img),
 		Despawn:   component.NewDespawn(component.DespawnDirectionDown),

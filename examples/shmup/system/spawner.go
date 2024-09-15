@@ -1,26 +1,24 @@
 package system
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/t-geindre/golem/examples/shmup/component"
 	"github.com/t-geindre/golem/pkg/golem"
 	"math/rand"
 	"time"
 )
 
-type SpawnFunc func(l golem.LayerID, px, py float64) golem.Entity
+type SpawnFunc func(l golem.LayerID) golem.Entity
 
 type Spawner struct {
-	xMin, xMax, y float64
-	spawns        []SpawnFunc
-	rate          time.Duration
-	last          time.Time
-	layer         golem.LayerID
+	spawns []SpawnFunc
+	rate   time.Duration
+	last   time.Time
+	layer  golem.LayerID
 }
 
-func NewSpawner(l golem.LayerID, xMin, xMax, y float64, rate time.Duration, spawns ...SpawnFunc) *Spawner {
+func NewSpawner(l golem.LayerID, rate time.Duration, spawns ...SpawnFunc) *Spawner {
 	return &Spawner{
-		xMin:   xMin,
-		xMax:   xMax,
-		y:      y,
 		spawns: spawns,
 		rate:   rate,
 		last:   time.Now(),
@@ -31,7 +29,22 @@ func NewSpawner(l golem.LayerID, xMin, xMax, y float64, rate time.Duration, spaw
 func (s *Spawner) UpdateOnce(w golem.World) {
 	if time.Since(s.last) > s.rate {
 		s.last = time.Now()
-		e := s.spawns[rand.Intn(len(s.spawns))](s.layer, s.xMin+rand.Float64()*(s.xMax-s.xMin), s.y)
+
+		e := s.spawns[rand.Intn(len(s.spawns))](s.layer)
+
+		xMax, _ := ebiten.WindowSize()
+		xMin := 0
+
+		sp := component.GetSprite(e)
+		pos := component.GetPosition(e)
+
+		if sp != nil && pos != nil {
+			bd := sp.Img.Bounds()
+			xMin += bd.Dx() / 2
+			xMax -= bd.Dx() / 2
+			pos.X = float64(rand.Intn(xMax-xMin) + xMin)
+		}
+
 		w.AddEntity(e)
 	}
 }
