@@ -26,8 +26,9 @@ func NewBullet(l golem.LayerID) golem.Entity {
 		Velocity: component.NewVelocity(0, -8),
 		Despawn:  component.NewDespawn(component.DespawnDirectionUp),
 		Collider: component.NewCollider(-4, -3, 8, 6),
-		Life:     component.NewLife(1),
+		Life:     component.NewLife(1, nil),
 		Animation: component.NewAnimation(
+			true,
 			component.NewFrame(helper.Assets["bullet_f1"], time.Millisecond*100),
 			component.NewFrame(helper.Assets["bullet_f2"], time.Millisecond*100),
 		),

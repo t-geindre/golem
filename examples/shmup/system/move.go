@@ -23,6 +23,25 @@ func (s *Move) Update(e golem.Entity, w golem.World) {
 	pos.X += vel.X
 	pos.Y += vel.Y
 
+	constraint := component.GetConstraint(e)
+	if constraint != nil {
+		if pos.X < constraint.XMin {
+			pos.X = constraint.XMin
+		}
+
+		if pos.X > constraint.XMax {
+			pos.X = constraint.XMax
+		}
+
+		if pos.Y < constraint.YMin {
+			pos.Y = constraint.YMin
+		}
+
+		if pos.Y > constraint.YMax {
+			pos.Y = constraint.YMax
+		}
+	}
+
 	collider := component.GetCollider(e)
 	if collider == nil {
 		return

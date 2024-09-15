@@ -10,31 +10,28 @@ type SpawnFunc func(l golem.LayerID, px, py float64) golem.Entity
 
 type Spawner struct {
 	xMin, xMax, y float64
-	spawn         SpawnFunc
+	spawns        []SpawnFunc
 	rate          time.Duration
 	last          time.Time
 	layer         golem.LayerID
 }
 
-func NewSpawner(l golem.LayerID, xMin, xMax, y float64, spawn SpawnFunc, rate time.Duration) *Spawner {
+func NewSpawner(l golem.LayerID, xMin, xMax, y float64, rate time.Duration, spawns ...SpawnFunc) *Spawner {
 	return &Spawner{
-		xMin:  xMin,
-		xMax:  xMax,
-		y:     y,
-		spawn: spawn,
-		rate:  rate,
-		last:  time.Now(),
-		layer: l,
+		xMin:   xMin,
+		xMax:   xMax,
+		y:      y,
+		spawns: spawns,
+		rate:   rate,
+		last:   time.Now(),
+		layer:  l,
 	}
 }
 
 func (s *Spawner) UpdateOnce(w golem.World) {
 	if time.Since(s.last) > s.rate {
 		s.last = time.Now()
-		e := s.spawn(s.layer, s.xMin+rand.Float64()*(s.xMax-s.xMin), s.y)
+		e := s.spawns[rand.Intn(len(s.spawns))](s.layer, s.xMin+rand.Float64()*(s.xMax-s.xMin), s.y)
 		w.AddEntity(e)
-		if s.rate > 100*time.Millisecond {
-			s.rate -= 10 * time.Millisecond
-		}
 	}
 }

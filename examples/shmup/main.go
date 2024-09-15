@@ -12,7 +12,8 @@ import (
 func main() {
 	const wWidth, wHeight = 600, 800
 	const (
-		LayerEnemies = iota
+		LayerBackground = iota
+		LayerEnemies
 		LayerPlayer
 		LayerBullets
 		LayerDebug
@@ -24,18 +25,21 @@ func main() {
 
 	g := golemutils.NewGame()
 
-	g.World.AddLayers(LayerEnemies, LayerPlayer, LayerBullets, LayerDebug)
+	g.World.AddLayers(LayerBackground, LayerEnemies, LayerPlayer, LayerBullets, LayerDebug)
 
 	collisionRules := []system.CollisionRule{
 		{LayerEnemies, LayerBullets, helper.Damage},
 		{LayerEnemies, LayerPlayer, helper.Damage},
 	}
 
-	g.World.AddSystem(system.NewSpawner(LayerEnemies, 20, wWidth-20, 0, entity.NewEnemy, time.Millisecond*500))
+	g.World.AddSystem(system.NewSpawner(LayerBackground, 0, wWidth, 0, time.Millisecond*500, entity.NewSparkle))
+	g.World.AddSystem(system.NewSpawner(
+		LayerEnemies, 20, wWidth-20, 0, time.Millisecond*500,
+		entity.NewEnemyLips, entity.NewEnemyAllan, entity.NewEnemyBonbon,
+	))
 	g.World.AddSystem(system.NewControls())
 	g.World.AddSystem(system.NewShoot())
 	g.World.AddSystem(system.NewMove())
-	g.World.AddSystem(system.NewConstraint())
 	g.World.AddSystem(system.NewCollision(collisionRules))
 	g.World.AddSystem(system.NewDespawner(0, wHeight, 10))
 	g.World.AddSystem(system.NewAnimation())

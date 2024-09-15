@@ -29,6 +29,11 @@ func (a *Animation) Update(e golem.Entity, w golem.World) {
 	}
 
 	if time.Since(anim.Start) > anim.Frames[anim.Current].Duration {
+		if anim.Current == len(anim.Frames)-1 {
+			if !anim.Loop {
+				return
+			}
+		}
 		anim.Current = (anim.Current + 1) % len(anim.Frames)
 		sprite.Img = anim.Frames[anim.Current].Img
 		anim.Start = time.Now()

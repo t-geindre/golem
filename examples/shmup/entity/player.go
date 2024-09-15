@@ -18,17 +18,15 @@ type Player struct {
 	*component.Constraint
 	*component.Collider
 	*component.Life
+	*component.Animation
 }
 
 func NewPlayer(l, bl golem.LayerID, px, py, cxMin, cxMax, cyMin, cyMax float64) golem.Entity {
-	img := helper.Assets["player"]
-	w, h := float64(img.Bounds().Dx())*.7, float64(img.Bounds().Dy())*.8
-
 	return &Player{
 		Entity:   golem.NewEntity(l),
 		Position: component.NewPosition(px, py),
 		Velocity: component.NewVelocity(0, 0),
-		Sprite:   component.NewSprite(img),
+		Sprite:   component.NewSprite(helper.Assets["player_f1"]),
 		Controls: component.NewControls(
 			ebiten.KeyUp,
 			ebiten.KeyDown,
@@ -37,9 +35,14 @@ func NewPlayer(l, bl golem.LayerID, px, py, cxMin, cxMax, cyMin, cyMax float64) 
 			ebiten.KeySpace,
 			5,
 		),
-		Shoot:      component.NewShoot(time.Millisecond*150, 0, -h*.7, NewBullet, bl),
+		Shoot:      component.NewShoot(time.Millisecond*150, 0, -32, NewBullet, bl),
 		Constraint: component.NewConstraint(cxMin, cxMax, cyMin, cyMax),
-		Collider:   component.NewCollider(-(w / 2), -(h / 2), w, h),
-		Life:       component.NewLife(5),
+		Collider:   component.NewCollider(-13, -29, 26, 26),
+		Life:       component.NewLife(5, NewExplosion),
+		Animation: component.NewAnimation(
+			true,
+			component.NewFrame(helper.Assets["player_f1"], time.Millisecond*50),
+			component.NewFrame(helper.Assets["player_f2"], time.Millisecond*50),
+		),
 	}
 }
