@@ -1,15 +1,12 @@
 package component
 
-import "github.com/t-geindre/golem/pkg/golem"
-
 //go:generate golem component Scene
 type Scene struct {
-	golem.World
 	Name string
 }
 
-func NewScene() *Scene {
+func NewScene(name string) *Scene {
 	return &Scene{
-		World: golem.NewWorld(),
+		Name: name,
 	}
 }

@@ -7,13 +7,10 @@ import (
 )
 
 type Renderer struct {
-	parent golem.Entity
 }
 
-func NewRenderer(parent golem.Entity) *Renderer {
-	return &Renderer{
-		parent: parent,
-	}
+func NewRenderer() *Renderer {
+	return &Renderer{}
 }
 
 func (r *Renderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
@@ -26,15 +23,23 @@ func (r *Renderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
 
 	hw, hh := sprite.Img.Bounds().Dx()/2, sprite.Img.Bounds().Dy()/2
 
-	opt := &ebiten.DrawImageOptions{}
-	opt.GeoM.Translate(pos.X-float64(hw), pos.Y-float64(hh))
+	opts := &ebiten.DrawImageOptions{}
 
-	if r.parent != nil {
-		parentPos := component.GetPosition(r.parent)
-		if parentPos != nil {
-			opt.GeoM.Translate(parentPos.X, parentPos.Y)
-		}
+	r.applyOpts(e, opts)
+	r.applyOpts(w.GetParentEntity(), opts)
+
+	opts.GeoM.Translate(pos.X-float64(hw), pos.Y-float64(hh))
+
+	screen.DrawImage(sprite.Img, opts)
+}
+
+func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions) {
+	if e == nil {
+		return
 	}
 
-	screen.DrawImage(sprite.Img, opt)
+	opacity := component.GetOpacity(e)
+	if opacity != nil {
+		opts.ColorScale.ScaleAlpha(opacity.Value)
+	}
 }

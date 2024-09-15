@@ -20,6 +20,7 @@ func main() {
 
 	ebiten.SetWindowTitle("Golem example - Scenes")
 	ebiten.SetWindowSize(wWidth, wHeight)
+
 	ebiten.SetVsyncEnabled(false)
 
 	g := golemutils.NewGame()
@@ -27,16 +28,15 @@ func main() {
 
 	scenes := make([]golem.Entity, 0)
 	for name, gopher := range map[string]golem.Entity{
-		"Normal": entity.NewGopher(LayerAll, 0, 0),
-		"Angry":  entity.NewGopherAngry(LayerAll, 0, 0),
-		"Sad":    entity.NewGopherSad(LayerAll, 0, 0),
+		"Normal": entity.NewGopher(LayerAll, margin+assets.Size/2, margin+assets.Size/2),
+		"Angry":  entity.NewGopherAngry(LayerAll, margin+assets.Size/2, margin+assets.Size/2),
+		"Sad":    entity.NewGopherSad(LayerAll, margin+assets.Size/2, margin+assets.Size/2),
 	} {
-		scene := entity.NewScene(LayerAll, margin+assets.Size/2, margin+assets.Size/2)
+		scene := entity.NewScene(LayerAll, name)
 		scene.AddLayers(LayerAll)
 		scene.AddEntity(gopher)
-		scene.AddSystem(system.NewRenderer(scene))
+		scene.AddSystem(system.NewRenderer())
 		scene.AddSystem(system.NewAnimation())
-		scene.Name = name
 		scenes = append(scenes, scene)
 	}
 

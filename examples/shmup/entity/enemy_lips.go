@@ -24,12 +24,19 @@ func NewEnemy(l golem.LayerID, px, py float64) golem.Entity {
 	return &Enemy{
 		Entity:   golem.NewEntity(l),
 		Position: component.NewPosition(px, py),
-		Velocity: component.NewVelocity(0, 5),
+		Velocity: component.NewVelocity(0, 4),
 		Sprite:   component.NewSprite(img),
 		Despawn:  component.NewDespawn(component.DespawnDirectionDown),
 		Collider: component.NewCollider(-(w / 2), -(h / 2), w, h),
-		Life:     component.NewLife(1),
+		Life: component.NewLife(1, func(e golem.Entity) golem.Entity {
+			pos := component.GetPosition(e)
+			if pos == nil {
+				panic("no position component")
+			}
+			return NewExplosion(e.GetLayer(), pos.X, pos.Y)
+		}),
 		Animation: component.NewAnimation(
+			true,
 			component.NewFrame(helper.Assets["enemy_f1"], time.Millisecond*500),
 			component.NewFrame(helper.Assets["enemy_f2"], time.Millisecond*50),
 			component.NewFrame(helper.Assets["enemy_f3"], time.Millisecond*50),
