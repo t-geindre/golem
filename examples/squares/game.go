@@ -16,6 +16,7 @@ func NewGame(rect *image.Point) *Game {
 
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
 	// We need our own ebiten.Game implementation to keep track of the window size
+	// TODO use ebiten.WindowSize() instead
 	g.rect.X, g.rect.Y = outsideWidth, outsideHeight
 	return outsideWidth, outsideHeight
 }

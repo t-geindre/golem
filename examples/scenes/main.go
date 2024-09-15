@@ -39,7 +39,7 @@ func main() {
 				component.NewFrame(helper.Assets[1], time.Millisecond*200),
 			},
 			helper.TransitionFade,
-			time.Millisecond * 250,
+			time.Millisecond * 500,
 		},
 		{
 			"Scale transition",
@@ -51,7 +51,7 @@ func main() {
 				component.NewFrame(helper.Assets[1], time.Millisecond*200),
 			},
 			helper.TransitionScale,
-			time.Millisecond * 200,
+			time.Millisecond * 400,
 		},
 		{
 			"No transition",

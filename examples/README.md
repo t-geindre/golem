@@ -2,28 +2,15 @@
 
 ## [Scenes](scenes)
 
-Demonstrates a very simple scene management system.
+Demonstrate a scene management system with transitions and lifecycle.
 
-Click left mouse button to switch between scenes.
-
-It can be fairly improved by adding `setup()` and `teardown()` methods
-to the scenes to make sure all resources are released when the scene is switched.
-
-The rendering system in each scene take care of the scene position, so moving the scene will
-also move all its contents. Can be useful for creating a transition effect between scenes.
-
-In a near future, scene management could be implemented in golem itself by creating a nodal
-architecture. If an entity is also a `golem.World`, it could be updated and drawn as well by
-the engine.
+Golem automatically take care of updating and rendering worlds embedded in an entity.
 
 ### Run
 
 ```bash
 $ go run github.com/t-geindre/golem/examples/scenes@latest
 ```
-
-### Todo
- - Add a transition system
 
 ## [Shmup](shmup)
 
@@ -36,12 +23,6 @@ Demonstrates how to create a simple game, handle input and collision detection.
 ```bash
 $ go run github.com/t-geindre/golem/examples/shmup@latest
 ```
-
-### Todo
- - Display score
- - Display HP
- - Add a background
- - Add more enemies
 
 ## [Squares](squares)
 
