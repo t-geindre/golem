@@ -2,9 +2,7 @@ package entity
 
 import (
 	"github.com/t-geindre/golem/examples/scenes/component"
-	"github.com/t-geindre/golem/examples/scenes/helper"
 	"github.com/t-geindre/golem/pkg/golem"
-	"time"
 )
 
 type Gopher struct {
@@ -14,14 +12,11 @@ type Gopher struct {
 	*component.Animation
 }
 
-func NewGopher(l golem.LayerID, x, y float64) *Gopher {
+func NewGopher(l golem.LayerID, fs ...component.Frame) *Gopher {
 	return &Gopher{
-		Entity:   golem.NewEntity(l),
-		Position: component.NewPosition(x, y),
-		Sprite:   component.NewSprite(helper.Assets[0]),
-		Animation: component.NewAnimation(
-			component.NewFrame(helper.Assets[0], time.Second*3),
-			component.NewFrame(helper.Assets[1], time.Millisecond*200),
-		),
+		Entity:    golem.NewEntity(l),
+		Position:  component.NewPosition(0.5, 0.5),
+		Sprite:    component.NewSprite(fs[0].Img),
+		Animation: component.NewAnimation(fs...),
 	}
 }

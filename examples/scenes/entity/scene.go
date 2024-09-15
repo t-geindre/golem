@@ -2,7 +2,6 @@ package entity
 
 import (
 	"github.com/t-geindre/golem/examples/scenes/component"
-	"github.com/t-geindre/golem/examples/scenes/helper"
 	"github.com/t-geindre/golem/pkg/golem"
 	"time"
 )
@@ -12,16 +11,20 @@ type Scene struct {
 	golem.World
 	*component.Scene
 	*component.Opacity
+	*component.Scale
 	*component.Transition
+	*component.Lifecycle
 }
 
-func NewScene(layer golem.LayerID, name string) *Scene {
+func NewScene(l golem.LayerID, n string, t component.TransitionFunc, d time.Duration) *Scene {
 	s := &Scene{
-		Entity:     golem.NewEntity(layer),
+		Entity:     golem.NewEntity(l),
 		World:      golem.NewWorld(),
-		Scene:      component.NewScene(name),
+		Scene:      component.NewScene(n),
 		Opacity:    component.NewOpacity(1),
-		Transition: component.NewTransition(helper.TransitionFade, time.Millisecond*250),
+		Scale:      component.NewScale(1),
+		Transition: component.NewTransition(t, d),
+		Lifecycle:  component.NewLifecycle(),
 	}
 
 	return s

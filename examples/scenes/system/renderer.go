@@ -28,7 +28,8 @@ func (r *Renderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
 	r.applyOpts(e, opts)
 	r.applyOpts(w.GetParentEntity(), opts)
 
-	opts.GeoM.Translate(pos.X-float64(hw), pos.Y-float64(hh))
+	ww, wh := ebiten.WindowSize()
+	opts.GeoM.Translate(pos.RelX*float64(ww)-float64(hw), pos.RelY*(float64(wh)-float64(hh)))
 
 	screen.DrawImage(sprite.Img, opts)
 }
@@ -41,5 +42,10 @@ func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions) {
 	opacity := component.GetOpacity(e)
 	if opacity != nil {
 		opts.ColorScale.ScaleAlpha(opacity.Value)
+	}
+
+	scale := component.GetScale(e)
+	if scale != nil {
+		opts.GeoM.Scale(scale.Value, scale.Value)
 	}
 }

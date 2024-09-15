@@ -45,9 +45,9 @@ func (s *Scene) Update(e golem.Entity, w golem.World) {
 			v = 1
 			tr.Transitioning = false
 			if isCurrent {
-				w.RemoveEntity(e)
+				s.removeScene(e, w)
 				s.transStart(s.next)
-				w.AddEntity(s.next)
+				s.addScene(s.next, w)
 				s.current = nil
 			}
 			if isNext {
@@ -105,6 +105,10 @@ func (s *Scene) nextScene(w golem.World, dir int) {
 		s.idx = 0
 	}
 
+	if s.scenes[s.idx] == s.current {
+		return
+	}
+
 	s.next = s.scenes[s.idx]
 
 	if s.current != nil {
@@ -113,7 +117,7 @@ func (s *Scene) nextScene(w golem.World, dir int) {
 	}
 
 	s.transStart(s.next)
-	w.AddEntity(s.next)
+	s.addScene(s.next, w)
 }
 
 func (s *Scene) transStart(e golem.Entity) {
@@ -121,5 +125,24 @@ func (s *Scene) transStart(e golem.Entity) {
 	if t != nil && !t.Transitioning {
 		t.Start = time.Now()
 		t.Transitioning = true
+		return
 	}
+
+	panic("no transition component, use helpers.TransitionNone to disable transition")
+}
+
+func (s *Scene) addScene(e golem.Entity, w golem.World) {
+	lf := component.GetLifecycle(e)
+	if lf != nil && lf.SetUp != nil {
+		lf.SetUp()
+	}
+	w.AddEntity(e)
+}
+
+func (s *Scene) removeScene(e golem.Entity, w golem.World) {
+	lf := component.GetLifecycle(e)
+	if lf != nil && lf.TearDown != nil {
+		lf.TearDown()
+	}
+	w.RemoveEntity(e)
 }

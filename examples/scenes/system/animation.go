@@ -17,7 +17,7 @@ func (a *Animation) Update(e golem.Entity, w golem.World) {
 	anim := component.GetAnimation(e)
 	sprite := component.GetSprite(e)
 
-	if anim == nil || sprite == nil {
+	if anim == nil || sprite == nil || len(anim.Frames) == 0 {
 		return
 	}
 

@@ -2,12 +2,15 @@ package component
 
 //go:generate golem component Position
 type Position struct {
-	X, Y float64
+	// Relative position
+	RelX, RelY float64
 }
+
+const PositionNone = -1
 
 func NewPosition(x, y float64) *Position {
 	return &Position{
-		X: x,
-		Y: y,
+		RelX: x,
+		RelY: y,
 	}
 }

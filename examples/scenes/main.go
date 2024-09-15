@@ -2,8 +2,9 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/t-geindre/golem/examples/scenes/assets"
+	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/examples/scenes/entity"
+	"github.com/t-geindre/golem/examples/scenes/helper"
 	"github.com/t-geindre/golem/examples/scenes/system"
 	"github.com/t-geindre/golem/pkg/golem"
 	"github.com/t-geindre/golem/pkg/golemutils"
@@ -11,33 +12,70 @@ import (
 )
 
 func main() {
-	const margin = 150
-	const wWidth, wHeight = assets.Size + margin*2, assets.Size + margin*2
 	const (
 		LayerAll = iota
 		LayerDebug
 	)
 
 	ebiten.SetWindowTitle("Golem example - Scenes")
-	ebiten.SetWindowSize(wWidth, wHeight)
-
+	ebiten.SetWindowSize(400, 400)
+	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetVsyncEnabled(false)
 
 	g := golemutils.NewGame()
 	g.World.AddLayers(LayerAll, LayerDebug)
 
 	scenes := make([]golem.Entity, 0)
-	for name, gopher := range map[string]golem.Entity{
-		"Normal": entity.NewGopher(LayerAll, margin+assets.Size/2, margin+assets.Size/2),
-		"Angry":  entity.NewGopherAngry(LayerAll, margin+assets.Size/2, margin+assets.Size/2),
-		"Sad":    entity.NewGopherSad(LayerAll, margin+assets.Size/2, margin+assets.Size/2),
+	for _, scene := range []struct {
+		name     string
+		frames   []component.Frame
+		trans    func(entity golem.Entity, v float64)
+		duration time.Duration
+	}{
+		{
+			"Fade transition",
+			[]component.Frame{
+				component.NewFrame(helper.Assets[0], time.Second*3),
+				component.NewFrame(helper.Assets[1], time.Millisecond*200),
+			},
+			helper.TransitionFade,
+			time.Millisecond * 250,
+		},
+		{
+			"Scale transition",
+			[]component.Frame{
+				component.NewFrame(helper.Assets[15], time.Second*3),
+				component.NewFrame(helper.Assets[20], time.Second*3),
+				component.NewFrame(helper.Assets[1], time.Millisecond*200),
+				component.NewFrame(helper.Assets[20], time.Second*3),
+				component.NewFrame(helper.Assets[1], time.Millisecond*200),
+			},
+			helper.TransitionScale,
+			time.Millisecond * 200,
+		},
+		{
+			"No transition",
+			[]component.Frame{
+				component.NewFrame(helper.Assets[22], time.Second*3),
+				component.NewFrame(helper.Assets[13], time.Second*1),
+				component.NewFrame(helper.Assets[18], time.Second*1),
+				component.NewFrame(helper.Assets[13], time.Second*1),
+			},
+			helper.TransitionNone,
+			0,
+		},
 	} {
-		scene := entity.NewScene(LayerAll, name)
-		scene.AddLayers(LayerAll)
-		scene.AddEntity(gopher)
-		scene.AddSystem(system.NewRenderer())
-		scene.AddSystem(system.NewAnimation())
-		scenes = append(scenes, scene)
+		se := entity.NewScene(LayerAll, scene.name, scene.trans, scene.duration)
+		se.Lifecycle.SetUp = func() {
+			se.World.AddLayers(LayerAll)
+			se.World.AddEntity(entity.NewGopher(LayerAll, scene.frames...))
+			se.AddSystem(system.NewRenderer())
+			se.AddSystem(system.NewAnimation())
+		}
+		se.Lifecycle.TearDown = func() {
+			se.World.Clear()
+		}
+		scenes = append(scenes, se)
 	}
 
 	g.World.AddSystem(system.NewScene(LayerDebug, scenes...))
