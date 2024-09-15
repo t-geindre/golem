@@ -22,6 +22,10 @@ func init() {
 
 	Assets = make(map[string]*ebiten.Image)
 
+	Assets["player_left_f1"] = getTile(sheet, 0, 0, TileSize, TileSize*2)
+	Assets["player_left_f2"] = getTile(sheet, 1, 0, TileSize, TileSize*2)
+	Assets["player_right_f1"] = getTile(sheet, 4, 0, TileSize, TileSize*2)
+	Assets["player_right_f2"] = getTile(sheet, 5, 0, TileSize, TileSize*2)
 	Assets["player_f1"] = getTile(sheet, 2, 0, TileSize, TileSize*2)
 	Assets["player_f2"] = getTile(sheet, 3, 0, TileSize, TileSize*2)
 

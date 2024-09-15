@@ -33,7 +33,7 @@ func main() {
 
 	g.World.AddSystem(system.NewSpawner(LayerBackground, time.Millisecond*500, entity.NewSparkle))
 	g.World.AddSystem(system.NewSpawner(
-		LayerEnemies, time.Millisecond*500,
+		LayerEnemies, time.Millisecond*250,
 		entity.NewEnemyLips, entity.NewEnemyAllan, entity.NewEnemyBonbon,
 	))
 	g.World.AddSystem(system.NewControls())

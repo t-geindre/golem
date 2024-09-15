@@ -21,6 +21,18 @@ func (a *Animation) Update(e golem.Entity, w golem.World) {
 		return
 	}
 
+	set := component.GetAnimationSet(e)
+	if set != nil && set.Next != set.Current {
+		if _, ok := set.Animations[set.Next]; !ok {
+			set.Next = set.Default
+		}
+
+		anim.Frames = set.Animations[set.Next].Frames
+		anim.Current = 0
+		set.Current = set.Next
+		set.Current = set.Next
+	}
+
 	if anim.Start.IsZero() {
 		anim.Start = time.Now()
 		anim.Current = 0

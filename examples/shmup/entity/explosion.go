@@ -4,6 +4,8 @@ import (
 	"github.com/t-geindre/golem/examples/shmup/component"
 	"github.com/t-geindre/golem/examples/shmup/helper"
 	"github.com/t-geindre/golem/pkg/golem"
+	"math"
+	"math/rand"
 	"time"
 )
 
@@ -13,6 +15,7 @@ type Explosion struct {
 	*component.Sprite
 	*component.Animation
 	*component.Lifetime
+	*component.Rotation
 }
 
 func NewExplosion(l golem.LayerID, px, py float64) golem.Entity {
@@ -29,5 +32,7 @@ func NewExplosion(l golem.LayerID, px, py float64) golem.Entity {
 			component.NewFrame(helper.Assets["explosion_f5"], time.Millisecond*40),
 		),
 		Lifetime: component.NewLifetime(time.Millisecond * 5 * 40),
+		// rand rad 360
+		Rotation: component.NewRotation(360 * math.Pi / 180 * rand.Float64()),
 	}
 }

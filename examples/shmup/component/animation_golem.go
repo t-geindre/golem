@@ -3,9 +3,7 @@
 
 package component
 
-import (
-	"github.com/t-geindre/golem/pkg/golem"
-)
+import "github.com/t-geindre/golem/pkg/golem"
 
 type AnimationGolemI interface {
 	GetAnimation() *Animation

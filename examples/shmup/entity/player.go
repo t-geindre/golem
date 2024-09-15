@@ -19,6 +19,7 @@ type Player struct {
 	*component.Collider
 	*component.Life
 	*component.Animation
+	*component.AnimationSet
 }
 
 func NewPlayer(l, bl golem.LayerID) golem.Entity {
@@ -45,10 +46,23 @@ func NewPlayer(l, bl golem.LayerID) golem.Entity {
 		Constraint: component.NewConstraint(-16, -32, 32, 32),
 		Collider:   component.NewCollider(-13, -29, 26, 26),
 		Life:       component.NewLife(5, NewExplosion),
-		Animation: component.NewAnimation(
-			true,
-			component.NewFrame(helper.Assets["player_f1"], time.Millisecond*50),
-			component.NewFrame(helper.Assets["player_f2"], time.Millisecond*50),
-		),
+		Animation:  component.NewAnimation(true),
+		AnimationSet: component.NewAnimationSet(map[string]*component.Animation{
+			"left": component.NewAnimation(
+				true,
+				component.NewFrame(helper.Assets["player_left_f1"], time.Millisecond*50),
+				component.NewFrame(helper.Assets["player_left_f2"], time.Millisecond*50),
+			),
+			"right": component.NewAnimation(
+				true,
+				component.NewFrame(helper.Assets["player_right_f1"], time.Millisecond*50),
+				component.NewFrame(helper.Assets["player_right_f2"], time.Millisecond*50),
+			),
+			"idle": component.NewAnimation(
+				true,
+				component.NewFrame(helper.Assets["player_f1"], time.Millisecond*50),
+				component.NewFrame(helper.Assets["player_f2"], time.Millisecond*50),
+			),
+		}, "idle"),
 	}
 }
