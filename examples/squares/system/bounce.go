@@ -1,19 +1,16 @@
 package system
 
 import (
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/examples/squares/component"
 	"github.com/t-geindre/golem/pkg/golem"
-	"image"
 )
 
 type Bounce struct {
-	rect *image.Point
 }
 
-func NewBounce(rect *image.Point) *Bounce {
-	return &Bounce{
-		rect: rect,
-	}
+func NewBounce() *Bounce {
+	return &Bounce{}
 }
 
 func (s *Bounce) Update(e golem.Entity, w golem.World) {
@@ -30,6 +27,7 @@ func (s *Bounce) Update(e golem.Entity, w golem.World) {
 		spr := sp.GetSprite()
 		mx, my = spr.Img.Bounds().Dx()/2, spr.Img.Bounds().Dy()/2
 	}
+	ww, wh := ebiten.WindowSize()
 
 	if pos.X < float64(mx) {
 		pos.X = float64(mx)
@@ -41,13 +39,13 @@ func (s *Bounce) Update(e golem.Entity, w golem.World) {
 		vel.Y = -vel.Y
 	}
 
-	if pos.X > float64(s.rect.X-mx) {
-		pos.X = float64(s.rect.X - mx)
+	if pos.X > float64(ww-mx) {
+		pos.X = float64(ww - mx)
 		vel.X = -vel.X
 	}
 
-	if pos.Y > float64(s.rect.Y-my) {
-		pos.Y = float64(s.rect.Y - my)
+	if pos.Y > float64(wh-my) {
+		pos.Y = float64(wh - my)
 		vel.Y = -vel.Y
 	}
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/t-geindre/golem/examples/squares/helper"
 	"github.com/t-geindre/golem/pkg/golem"
 	"github.com/t-geindre/golem/pkg/golemutils"
-	"image"
 	"math/rand"
 	"time"
 )
@@ -16,16 +15,14 @@ type Spawner struct {
 	rate  int
 	last  time.Time
 	layer golem.LayerID
-	rect  *image.Point
 	count int
 	*golemutils.Panel
 }
 
-func NewSpawner(sl, dl golem.LayerID, rect *image.Point) *Spawner {
+func NewSpawner(sl, dl golem.LayerID) *Spawner {
 	s := &Spawner{
 		rate:  1,
 		layer: sl,
-		rect:  rect,
 	}
 	s.Panel = golemutils.NewPanel(dl, s.getDisplay, golemutils.RefreshOnce)
 	s.Stick = golemutils.StickTopRight
@@ -35,7 +32,13 @@ func NewSpawner(sl, dl golem.LayerID, rect *image.Point) *Spawner {
 func (s *Spawner) UpdateOnce(w golem.World) {
 	_, y := ebiten.Wheel()
 	if y != 0 {
-		s.rate += int(y * 5)
+		if ebiten.IsKeyPressed(ebiten.KeyShift) {
+			y *= 10
+		}
+		if ebiten.IsKeyPressed(ebiten.KeyAlt) {
+			y *= 10
+		}
+		s.rate += int(y)
 		if s.rate < 1 {
 			s.rate = 1
 		}
@@ -45,7 +48,8 @@ func (s *Spawner) UpdateOnce(w golem.World) {
 	if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		for i := 0; i < s.rate; i++ {
 			asset := helper.Assets[s.count%len(helper.Assets)]
-			mw, mh := float64(s.rect.X-asset.Bounds().Dx()/2), float64(s.rect.Y-asset.Bounds().Dy())
+			ww, wh := ebiten.WindowSize()
+			mw, mh := float64(ww-asset.Bounds().Dx()/2), float64(wh-asset.Bounds().Dy())
 
 			e := entity.NewSquare(
 				s.layer,
