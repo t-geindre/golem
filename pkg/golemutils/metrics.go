@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/pkg/golem"
-	"runtime"
 	"time"
 )
 
@@ -30,14 +29,10 @@ func (m *Metrics) GetLayer() golem.LayerID {
 }
 
 func (m *Metrics) metricsRefresh(w golem.World) string {
-	var mem runtime.MemStats
-	runtime.ReadMemStats(&mem)
-
 	return fmt.Sprintf(
-		"FPS: %.2f TPS: %.2f Mem: %v MB\nRes: %dx%d Entities: %d",
+		"FPS: %.2f TPS: %.2f\nRes: %dx%d Entities: %d",
 		ebiten.ActualFPS(),
 		ebiten.ActualTPS(),
-		mem.Sys/1024/1024,
 		m.rx, m.ry,
 		w.Size(),
 	)

@@ -3,28 +3,28 @@ package golem
 type EntityID uint64
 
 type Entity interface {
-	GetID() EntityID
-	setId(id EntityID)
 	GetLayer() LayerID
+	setIndex(int)
+	getIndex() int
 }
 
 type entity struct {
-	id    EntityID
 	layer LayerID
+	idx   int
 }
 
-func NewEntity(layer LayerID) Entity {
-	return &entity{layer: layer}
-}
-
-func (e *entity) GetID() EntityID {
-	return e.id
-}
-
-func (e *entity) setId(id EntityID) {
-	e.id = id
+func NewEntity(l LayerID) Entity {
+	return &entity{layer: l}
 }
 
 func (e *entity) GetLayer() LayerID {
 	return e.layer
+}
+
+func (e *entity) setIndex(idx int) {
+	e.idx = idx
+}
+
+func (e *entity) getIndex() int {
+	return e.idx
 }

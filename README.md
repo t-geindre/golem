@@ -95,7 +95,12 @@ func NewPlayer() *Player {
 }
 ```
 
-The component retrieval is based on interfaces, that's why all components must be embedded as pointer.
+The component retrieval is based on interfaces, that's why all components must be embedded as 
+pointer.
+
+Components of an entity are defined at compilation time, so you can't add or remove
+components at runtime. Though you can still set an entity's component to `nil`, which will
+make your system act as if the component was not present.
 
 ### Systems
 
@@ -108,3 +113,37 @@ TODO
 ## Examples
 
 See the [examples](./examples) directory.
+
+## Benchmarks
+
+### World 
+
+Run world benchmarks with:
+
+```bash
+$ go test test/benchmark_test.go -bench=.
+```
+
+ * **Simple world**: 1 system updating entities
+ * **Complex world**: 3 systems updating entities
+ * **Dead world**: 6 systems doing nothing
+
+World update and draw benchmarks are run with `100K` entities.
+Entities removal and addition benchmarks are run with `1M` entities.
+
+#### Results
+
+Given results are rounded values. They may vary depending on the system load.
+
+<details>
+<summary>CPU: 11th Gen Intel(R) Core(TM) i7-1165G7 @ 2.80GHz</summary>
+
+* SimpleWorldUpdate: `0.6 ms`
+* SimpleWorldDraw: `0.6 ms`
+* ComplexWorldUpdate: `2.9 ms`
+* ComplexWorldDraw: `2.8 ms`
+* DeadWorldUpdate: `1 ms`
+* DeadWorldDraw: `1 ms`
+* AddRemoveSingleEntity: `165 ns`
+* AddRemoveMultipleEntities: `525 ns`
+</details>

@@ -1,6 +1,8 @@
 package golem
 
-import "github.com/hajimehoshi/ebiten/v2"
+import (
+	"github.com/hajimehoshi/ebiten/v2"
+)
 
 type LayerID uint8
 
@@ -17,6 +19,7 @@ type World interface {
 	Size() int
 	Flush()
 	AddSystem(s System)
+	AddSystems(s ...System)
 	RemoveSystem(s System)
 	Draw(screen *ebiten.Image)
 	Update()
@@ -24,7 +27,6 @@ type World interface {
 
 type world struct {
 	layers       []LayerID
-	ids          EntityID
 	entities     map[LayerID][]Entity
 	parent       Entity
 	eCount       int
@@ -89,9 +91,8 @@ func (w *world) GetLayers() []LayerID {
 
 func (w *world) AddEntity(e Entity) {
 	w.delayed = append(w.delayed, func() {
-		w.ids++
-		e.setId(w.ids)
 		w.AddLayers(e.GetLayer())
+		e.setIndex(len(w.entities[e.GetLayer()]))
 		w.entities[e.GetLayer()] = append(w.entities[e.GetLayer()], e)
 		w.eCount++
 	})
@@ -99,13 +100,23 @@ func (w *world) AddEntity(e Entity) {
 
 func (w *world) RemoveEntity(e Entity) {
 	w.delayed = append(w.delayed, func() {
-		for i, candidate := range w.entities[e.GetLayer()] {
-			if candidate.GetID() == e.GetID() {
-				w.entities[e.GetLayer()] = append(w.entities[e.GetLayer()][:i], w.entities[e.GetLayer()][i+1:]...)
-				w.eCount--
-				break
-			}
+		w.AddLayers(e.GetLayer())
+		mln := len(w.entities[e.GetLayer()]) - 1
+		idx := e.getIndex()
+
+		if e != w.entities[e.GetLayer()][idx] {
+			// Entity index is not valid, either the entity has already been removed or
+			// has been added to another world
+			return
 		}
+
+		if idx != mln {
+			last := w.entities[e.GetLayer()][mln]
+			last.setIndex(idx)
+			w.entities[e.GetLayer()][idx] = last
+		}
+		w.entities[e.GetLayer()] = w.entities[e.GetLayer()][0:mln]
+		w.eCount--
 	})
 }
 
@@ -126,6 +137,10 @@ func (w *world) Size() int {
 }
 
 func (w *world) Flush() {
+	if len(w.delayed) == 0 {
+		return
+	}
+
 	for _, do := range w.delayed {
 		do()
 	}
@@ -148,6 +163,12 @@ func (w *world) AddSystem(s System) {
 
 	if uo, ok := s.(UpdaterOnce); ok {
 		w.updatersOnce = append(w.updatersOnce, uo)
+	}
+}
+
+func (w *world) AddSystems(s ...System) {
+	for _, sys := range s {
+		w.AddSystem(sys)
 	}
 }
 
