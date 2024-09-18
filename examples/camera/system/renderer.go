@@ -5,6 +5,7 @@ import (
 	"github.com/t-geindre/golem/examples/camera/component"
 	"github.com/t-geindre/golem/examples/camera/entity"
 	"github.com/t-geindre/golem/pkg/golem"
+	"image"
 )
 
 type Renderer struct {
@@ -27,6 +28,14 @@ func (r *Renderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
 
 	shw, shh := sprite.Img.Bounds().Dy()/2, sprite.Img.Bounds().Dx()/2
 
+	// Culling
+	sprBounds := sprite.Img.Bounds()
+	sprBounds = sprBounds.Sub(sprBounds.Min).Add(pos.Point).Sub(image.Pt(shw, shh))
+	if !sprBounds.Overlaps(r.cam.Fov) {
+		return
+	}
+
+	// Rendering
 	opts := &ebiten.DrawImageOptions{}
 	opts.GeoM.Translate(float64(pos.X-shw), float64(pos.Y-shh))
 	opts.GeoM.Translate(float64(-r.cam.Fov.Min.X), float64(-r.cam.Fov.Min.Y))
