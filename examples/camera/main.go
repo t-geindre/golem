@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/t-geindre/golem/examples/camera/assets"
 	"github.com/t-geindre/golem/examples/camera/component"
 	"github.com/t-geindre/golem/examples/camera/entity"
 	"github.com/t-geindre/golem/examples/camera/helper"
@@ -21,8 +20,10 @@ func main() {
 	currentLayer := golem.LayerID(0)
 	g := golemutils.NewGame()
 
-	tileset := helper.NewTileset(helper.LoadImage(assets.Tileset), 27, 16, 16)
-	m := helper.LoadMap(assets.Map)
+	tileset := helper.NewTilesetFromFile("tileset.tsx")
+	tw, th := tileset.GetTileSize()
+	m := helper.LoadMapFromFile("map3.tmj")
+
 	for _, layer := range m.Layers {
 		currentLayer++
 		g.World.AddLayers(currentLayer)
@@ -31,10 +32,16 @@ func main() {
 			if tile == 0 {
 				continue
 			}
-			e := entity.NewTile(
-				currentLayer, i%m.Width*16, i/m.Height*16,
-				component.NewFrame(tileset.GetTile(tile), time.Second/2),
-			)
+			t := tileset.GetTile(tile)
+			fs := make([]component.Frame, 0)
+			if t.Animation != nil {
+				for _, f := range t.Animation {
+					fs = append(fs, component.Frame{Img: f.Img, Duration: f.Duration})
+				}
+			} else {
+				fs = append(fs, component.Frame{Img: t.Img})
+			}
+			e := entity.NewTile(currentLayer, i%m.Width*tw, i/m.Height*th, fs...)
 			g.World.AddEntity(e)
 		}
 	}

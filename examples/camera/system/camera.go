@@ -6,11 +6,12 @@ import (
 	"github.com/t-geindre/golem/examples/camera/helper"
 	"github.com/t-geindre/golem/pkg/golem"
 	"image"
+	"math"
 )
 
 type Camera struct {
-	zoom float64
-	pos  image.Point
+	zoom, tZoom float64
+	pos         image.Point
 
 	lmx, lmy int
 	lm       bool
@@ -18,29 +19,57 @@ type Camera struct {
 
 func NewCamera() *Camera {
 	return &Camera{
-		zoom: 3,
-		pos:  image.Point{},
+		zoom:  3,
+		tZoom: 3,
+		pos:   image.Point{},
 	}
 }
 
 func (r *Camera) UpdateOnce(w golem.World) {
 	_, y := ebiten.Wheel()
-	r.zoom += float64(y) / 10
+	if y != 0 {
+		delta := float64(y) / 5
+		r.tZoom += delta
+	}
+
+	if r.zoom != r.tZoom {
+		d := (r.tZoom - r.zoom) / 3
+		if math.Abs(d) < 0.01 {
+			r.zoom = r.tZoom
+		} else {
+			r.zoom += d
+		}
+	}
 
 	if !ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
 		r.lm = false
 		ebiten.SetCursorShape(ebiten.CursorShapeDefault)
-		return
+	} else {
+		mx, my := ebiten.CursorPosition()
+		if r.lm {
+			r.pos = r.pos.Add(image.Point{X: mx - r.lmx, Y: my - r.lmy})
+		} else {
+			r.lm = true
+			ebiten.SetCursorShape(ebiten.CursorShapeMove)
+		}
+		r.lmx, r.lmy = mx, my
 	}
 
-	mx, my := ebiten.CursorPosition()
-	if r.lm {
-		r.pos = r.pos.Add(image.Point{X: mx - r.lmx, Y: my - r.lmy})
-	} else {
-		r.lm = true
-		ebiten.SetCursorShape(ebiten.CursorShapeMove)
+	if ebiten.IsKeyPressed(ebiten.KeyArrowUp) {
+		r.pos.Y += 5
 	}
-	r.lmx, r.lmy = mx, my
+
+	if ebiten.IsKeyPressed(ebiten.KeyArrowDown) {
+		r.pos.Y -= 5
+	}
+
+	if ebiten.IsKeyPressed(ebiten.KeyArrowLeft) {
+		r.pos.X += 5
+	}
+
+	if ebiten.IsKeyPressed(ebiten.KeyArrowRight) {
+		r.pos.X -= 5
+	}
 }
 
 func (r *Camera) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
@@ -51,8 +80,7 @@ func (r *Camera) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
 		return
 	}
 
-	sh, sw := sprite.Img.Bounds().Dy(), sprite.Img.Bounds().Dx()
-	shw, shh := sw/2, sh/2
+	shw, shh := sprite.Img.Bounds().Dy()/2, sprite.Img.Bounds().Dx()/2
 
 	opts := &ebiten.DrawImageOptions{}
 	opts.GeoM.Translate(float64(pos.X-shw), float64(pos.Y-shh))

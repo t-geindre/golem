@@ -15,6 +15,10 @@ type Map struct {
 	Layers []MapLayer
 }
 
+func LoadMapFromFile(path string) *Map {
+	return LoadMap(readFile(path))
+}
+
 func LoadMap(scr []byte) *Map {
 	m := &Map{}
 	err := json.Unmarshal(scr, &m)
