@@ -8,9 +8,10 @@ type LayerID uint8
 
 type World interface {
 	Clear()
-	AddLayers(layers ...LayerID)
+	AddLayers(layers ...LayerID) LayerID
 	RemoveLayer(layer LayerID)
 	AddEntity(e Entity)
+	AddEntities(e ...Entity)
 	RemoveEntity(e Entity)
 	GetEntities(layer LayerID) []Entity
 	SetParentEntity(e Entity)
@@ -36,6 +37,7 @@ type world struct {
 	updaters     []Updater
 	updatersOnce []UpdaterOnce
 	delayed      []func()
+	nextLid      LayerID
 }
 
 func NewWorld() World {
@@ -61,9 +63,12 @@ func (w *world) Clear() {
 	w.eChildCount = 0
 }
 
-func (w *world) AddLayers(layers ...LayerID) {
+func (w *world) AddLayers(layers ...LayerID) LayerID {
 main:
 	for _, layer := range layers {
+		if layer >= w.nextLid {
+			w.nextLid = layer + 1
+		}
 		for _, l := range w.layers {
 			if l == layer {
 				continue main
@@ -73,6 +78,8 @@ main:
 		w.entities[layer] = make([]Entity, 0)
 		w.drawersOnce[layer] = make([]DrawerOnce, 0)
 	}
+
+	return w.nextLid
 }
 
 func (w *world) RemoveLayer(layer LayerID) {
@@ -96,6 +103,12 @@ func (w *world) AddEntity(e Entity) {
 		w.entities[e.GetLayer()] = append(w.entities[e.GetLayer()], e)
 		w.eCount++
 	})
+}
+
+func (w *world) AddEntities(e ...Entity) {
+	for _, en := range e {
+		w.AddEntity(en)
+	}
 }
 
 func (w *world) RemoveEntity(e Entity) {
