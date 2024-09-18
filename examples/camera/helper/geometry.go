@@ -1,6 +1,9 @@
 package helper
 
-import "image"
+import (
+	"image"
+	"math"
+)
 
 func RectMulF(r image.Rectangle, f float64) image.Rectangle {
 	return image.Rect(
@@ -11,9 +14,9 @@ func RectMulF(r image.Rectangle, f float64) image.Rectangle {
 	)
 }
 
-func PointMulF(p image.Point, f float64) image.Point {
-	return image.Point{
-		X: int(float64(p.X) * f),
-		Y: int(float64(p.Y) * f),
+func ISignCeilFloor(x float64) int {
+	if x < 0 {
+		return int(math.Floor(x))
 	}
+	return int(math.Ceil(x))
 }

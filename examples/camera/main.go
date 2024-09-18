@@ -17,12 +17,17 @@ func main() {
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetVsyncEnabled(false)
 
-	currentLayer := golem.LayerID(0)
 	g := golemutils.NewGame()
 
 	tileset := helper.NewTilesetFromFile("tileset.tsx")
 	tw, th := tileset.GetTileSize()
 	m := helper.LoadMapFromFile("map3.tmj")
+
+	currentLayer := golem.LayerID(0)
+
+	cam := entity.NewCamera(currentLayer, 2, 2, m.Width*tw/2, m.Height*th/2)
+	g.World.AddLayers(currentLayer)
+	g.World.AddEntity(cam)
 
 	for _, layer := range m.Layers {
 		currentLayer++
@@ -52,6 +57,7 @@ func main() {
 	g.World.AddSystems(
 		system.NewAnimation(),
 		system.NewCamera(),
+		system.NewRenderer(cam),
 		golemutils.NewMetrics(currentLayer, time.Millisecond*100),
 	)
 
