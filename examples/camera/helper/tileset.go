@@ -81,7 +81,7 @@ func (t *Tileset) GetTile(id int) Tile {
 	return tile
 }
 
-func (t *Tileset) GetTileSize() (int, int) {
+func (t *Tileset) TileSize() (int, int) {
 	return t.data.Tw, t.data.Th
 }
 

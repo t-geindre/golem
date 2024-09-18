@@ -3,6 +3,7 @@ package entity
 import (
 	"github.com/t-geindre/golem/examples/camera/component"
 	"github.com/t-geindre/golem/pkg/golem"
+	"image"
 )
 
 type Tile struct {
@@ -12,11 +13,16 @@ type Tile struct {
 	*component.Sprite
 }
 
-func NewTile(l golem.LayerID, x, y int, fs ...component.Frame) golem.Entity {
-	return &Tile{
-		Entity:    golem.NewEntity(l),
-		Position:  component.NewPosition(x, y),
-		Sprite:    component.NewSprite(fs[0].Img),
-		Animation: component.NewAnimation(true, fs...),
+func NewTile(l golem.LayerID, p image.Point, fs ...component.Frame) golem.Entity {
+	t := &Tile{
+		Entity:   golem.NewEntity(l),
+		Position: component.NewPosition(p),
+		Sprite:   component.NewSprite(fs[0].Img),
 	}
+
+	if len(fs) > 1 {
+		t.Animation = component.NewAnimation(true, fs...)
+	}
+
+	return t
 }
