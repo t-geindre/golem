@@ -1,5 +1,18 @@
 # Golem examples
 
+## [Camera](camera)
+
+Demonstrate a simple camera system with:
+
+ - Culling
+ - Zooming
+
+### Run
+
+```bash
+$ go run github.com/t-geindre/golem/examples/camera@latest
+```
+
 ## [Scenes](scenes)
 
 Demonstrate a scene management system with transitions and lifecycle.
