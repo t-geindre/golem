@@ -30,8 +30,7 @@ func (s *Bounce) Update(e golem.Entity, w golem.World) {
 	mx, my := 0, 0
 	sp := component.GetSprite(e)
 	if sp != nil {
-		spr := sp.GetSprite()
-		mx, my = spr.Img.Bounds().Dx()/2, spr.Img.Bounds().Dy()/2
+		mx, my = sp.Img.Bounds().Dx()/2, sp.Img.Bounds().Dy()/2
 	}
 
 	if pos.X < float64(mx) {
