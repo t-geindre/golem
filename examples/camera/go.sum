@@ -6,10 +6,14 @@ github.com/ebitengine/purego v0.7.0 h1:HPZpl61edMGCEW6XK2nsR6+7AnJ3unUxpTZBkkIXn
 github.com/ebitengine/purego v0.7.0/go.mod h1:ah1In8AOtksoNK6yk5z1HTJeUkC1Ez4Wk2idgGslMwQ=
 github.com/hajimehoshi/bitmapfont/v3 v3.0.0 h1:r2+6gYK38nfztS/et50gHAswb9hXgxXECYgE8Nczmi4=
 github.com/hajimehoshi/bitmapfont/v3 v3.0.0/go.mod h1:+CxxG+uMmgU4mI2poq944i3uZ6UYFfAkj9V6WqmuvZA=
-github.com/hajimehoshi/ebiten/v2 v2.7.8 h1:QrlvF2byCzMuDsbxFReJkOCbM3O2z1H/NKQaGcA8PKk=
-github.com/hajimehoshi/ebiten/v2 v2.7.8/go.mod h1:Ulbq5xDmdx47P24EJ+Mb31Zps7vQq+guieG9mghQUaA=
+github.com/hajimehoshi/ebiten/v2 v2.7.10 h1:fsVukQdPDUlalSSpFkuszTy0cK2DL0fxFoSnTVdlmAM=
+github.com/hajimehoshi/ebiten/v2 v2.7.10/go.mod h1:Ulbq5xDmdx47P24EJ+Mb31Zps7vQq+guieG9mghQUaA=
 github.com/jezek/xgb v1.1.1 h1:bE/r8ZZtSv7l9gk6nU0mYx51aXrvnyb44892TwSaqS4=
 github.com/jezek/xgb v1.1.1/go.mod h1:nrhwO0FX/enq75I7Y7G8iN1ubpSGZEiA3v9e9GyRFlk=
+github.com/t-geindre/golem v0.0.0-20240915202713-d00af1664245 h1:TSLhbnVKLDs5CbTQnUzK6Dm90lgCQ5XnPZBVLKSJ3+g=
+github.com/t-geindre/golem v0.0.0-20240915202713-d00af1664245/go.mod h1:mttOulADPT7my1LSFOhKo3lQyHsak7nrnMH9q8Pf+Hg=
+github.com/t-geindre/golem v0.0.0-20240918155742-7700e1a65d26 h1:Y5B7ikbANfgPUcNQIiS4tqOGUIF7h5YtdjMQvYamUL0=
+github.com/t-geindre/golem v0.0.0-20240918155742-7700e1a65d26/go.mod h1:7h2k5iNllYi+8cXL5y3ZN+/YBTRUvJQ/LIwdEu/WPdc=
 golang.org/x/image v0.18.0 h1:jGzIakQa/ZXI1I0Fxvaa9W7yP25TqT6cHIHn+6CqvSQ=
 golang.org/x/image v0.18.0/go.mod h1:4yyo5vMFQjVjUcVk4jEQcU9MGy/rulF5WvUILseCM2E=
 golang.org/x/sync v0.7.0 h1:YsImfSBoP9QPYL0xyKJPq0gcaJdG3rInoqxTWbfQu9M=

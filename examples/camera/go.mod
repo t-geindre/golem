@@ -3,8 +3,8 @@ module github.com/t-geindre/golem/examples/camera
 go 1.22.1
 
 require (
-	github.com/hajimehoshi/ebiten/v2 v2.7.8
-	github.com/t-geindre/golem v0.0.0-20240915202713-d00af1664245
+	github.com/hajimehoshi/ebiten/v2 v2.7.10
+	github.com/t-geindre/golem v0.0.0-20240918155742-7700e1a65d26
 )
 
 require (
@@ -16,5 +16,3 @@ require (
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
 )
-
-replace github.com/t-geindre/golem => /home/tgeindre/www/golem
