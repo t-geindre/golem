@@ -7,10 +7,16 @@ import (
 )
 
 type Renderer struct {
+	ww, wh float64
 }
 
 func NewRenderer() *Renderer {
 	return &Renderer{}
+}
+
+func (r *Renderer) UpdateOnce(w golem.World) {
+	ww, wh := ebiten.WindowSize()
+	r.ww, r.wh = float64(ww), float64(wh)
 }
 
 func (r *Renderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
@@ -28,8 +34,7 @@ func (r *Renderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
 	r.applyOpts(e, opts)
 	r.applyOpts(w.GetParentEntity(), opts)
 
-	ww, wh := ebiten.WindowSize()
-	opts.GeoM.Translate(pos.RelX*float64(ww)-float64(hw), pos.RelY*(float64(wh)-float64(hh)))
+	opts.GeoM.Translate(pos.RelX*r.ww-float64(hw), pos.RelY*r.wh-float64(hh))
 
 	screen.DrawImage(sprite.Img, opts)
 }
