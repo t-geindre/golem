@@ -7,10 +7,16 @@ import (
 )
 
 type Bounce struct {
+	bx, by float64
 }
 
 func NewBounce() *Bounce {
 	return &Bounce{}
+}
+
+func (s *Bounce) UpdateOnce(w golem.World) {
+	ww, wh := ebiten.WindowSize()
+	s.bx, s.by = float64(ww), float64(wh)
 }
 
 func (s *Bounce) Update(e golem.Entity, w golem.World) {
@@ -27,7 +33,6 @@ func (s *Bounce) Update(e golem.Entity, w golem.World) {
 		spr := sp.GetSprite()
 		mx, my = spr.Img.Bounds().Dx()/2, spr.Img.Bounds().Dy()/2
 	}
-	ww, wh := ebiten.WindowSize()
 
 	if pos.X < float64(mx) {
 		pos.X = float64(mx)
@@ -39,13 +44,13 @@ func (s *Bounce) Update(e golem.Entity, w golem.World) {
 		vel.Y = -vel.Y
 	}
 
-	if pos.X > float64(ww-mx) {
-		pos.X = float64(ww - mx)
+	if pos.X > s.bx-float64(mx) {
+		pos.X = s.bx - float64(mx)
 		vel.X = -vel.X
 	}
 
-	if pos.Y > float64(wh-my) {
-		pos.Y = float64(wh - my)
+	if pos.Y > s.by-float64(my) {
+		pos.Y = s.by - float64(my)
 		vel.Y = -vel.Y
 	}
 }
