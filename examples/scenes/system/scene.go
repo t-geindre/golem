@@ -70,7 +70,7 @@ func (s *Scene) UpdateOnce(w golem.World) {
 
 	s.Panel.UpdateOnce(w)
 
-	if len(s.scenes) == 0 || s.transitioning {
+	if s.transitioning {
 		return
 	}
 
@@ -97,6 +97,10 @@ func (s *Scene) getPanelInfos(w golem.World) string {
 }
 
 func (s *Scene) nextScene(w golem.World, dir int) {
+	if len(s.scenes) == 0 {
+		return
+	}
+
 	s.idx += dir
 	if s.idx < 0 {
 		s.idx = len(s.scenes) - 1

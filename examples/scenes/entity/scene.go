@@ -22,7 +22,7 @@ func NewScene(l golem.LayerID, n string, t component.TransitionFunc, d time.Dura
 		World:      golem.NewWorld(),
 		Scene:      component.NewScene(n),
 		Opacity:    component.NewOpacity(1),
-		Scale:      component.NewScale(1),
+		Scale:      component.NewScale(1, 0.5, 0.5),
 		Transition: component.NewTransition(t, d),
 		Lifecycle:  component.NewLifecycle(),
 	}

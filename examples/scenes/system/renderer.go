@@ -2,12 +2,19 @@ package system
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/pkg/golem"
+	"golang.org/x/image/colornames"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
+	"math"
+	_ "unsafe"
 )
 
 type Renderer struct {
 	ww, wh float64
+	dirty  bool
 }
 
 func NewRenderer() *Renderer {
@@ -15,28 +22,49 @@ func NewRenderer() *Renderer {
 }
 
 func (r *Renderer) UpdateOnce(w golem.World) {
-	ww, wh := ebiten.WindowSize()
-	r.ww, r.wh = float64(ww), float64(wh)
+	ww, wh := 0, 0
+	if ebiten.IsFullscreen() {
+		ww, wh = ebiten.Monitor().Size()
+	} else {
+		ww, wh = ebiten.WindowSize()
+	}
+
+	wwf, whf := float64(ww), float64(wh)
+	if r.ww != wwf || r.wh != whf {
+		r.ww, r.wh = wwf, whf
+		r.dirty = true
+		return
+	}
+
+	r.dirty = false
 }
 
 func (r *Renderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
 	pos := component.GetPosition(e)
-	sprite := component.GetSprite(e)
-
-	if pos == nil || sprite == nil {
+	if pos == nil {
 		return
 	}
 
-	hw, hh := sprite.Img.Bounds().Dx()/2, sprite.Img.Bounds().Dy()/2
+	spr := component.GetSprite(e)
+	txt := component.GetText(e)
+
+	if spr == nil && txt == nil {
+		return
+	}
 
 	opts := &ebiten.DrawImageOptions{}
-
 	r.applyOpts(e, opts)
 	r.applyOpts(w.GetParentEntity(), opts)
+	opts.GeoM.Translate(pos.RelX*r.ww, pos.RelY*r.wh)
 
-	opts.GeoM.Translate(pos.RelX*r.ww-float64(hw), pos.RelY*r.wh-float64(hh))
+	if spr != nil {
+		r.renderSprite(spr, opts, screen)
+	}
 
-	screen.DrawImage(sprite.Img, opts)
+	if txt != nil {
+		r.renderText(e, txt, opts, screen)
+	}
+
 }
 
 func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions) {
@@ -53,4 +81,54 @@ func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions) {
 	if scale != nil {
 		opts.GeoM.Scale(scale.Value, scale.Value)
 	}
+}
+
+func (r *Renderer) renderSprite(spr *component.Sprite, opts *ebiten.DrawImageOptions, screen *ebiten.Image) {
+	hw, hh := spr.Img.Bounds().Dx()/2, spr.Img.Bounds().Dy()/2
+	opts.GeoM.Translate(-float64(hw), -float64(hh))
+	screen.DrawImage(spr.Img, opts)
+}
+
+func (r *Renderer) renderText(e golem.Entity, txt *component.Text, opts *ebiten.DrawImageOptions, screen *ebiten.Image) {
+	r.applyTextColor(e, opts)
+	r.computeTextFace(txt)
+	r.computeTextSize(txt)
+	opts.Filter = ebiten.FilterLinear // Improve text quality
+
+	opts.GeoM.Translate(-txt.Width/2, txt.FontAscent-txt.Height/2)
+	text.Draw(screen, txt.GetValue(), txt.FontFace, &text.DrawOptions{DrawImageOptions: *opts})
+}
+
+func (r *Renderer) applyTextColor(e golem.Entity, opts *ebiten.DrawImageOptions) {
+	col := colornames.Black
+	clr := component.GetColor(e)
+	if clr != nil {
+		col = clr.Value
+	}
+	opts.ColorScale.ScaleWithColor(col)
+}
+
+func (r *Renderer) computeTextFace(txt *component.Text) {
+	if txt.FontFace != nil && !r.dirty {
+		return
+	}
+
+	fontSize := txt.FontSize * math.Min(r.ww, r.wh) / 100
+
+	face, _ := opentype.NewFace(txt.Font, &opentype.FaceOptions{
+		Size:    fontSize,
+		DPI:     72,
+		Hinting: font.HintingFull,
+	})
+	txt.FontFace = text.NewGoXFace(face)
+	txt.FontAscent = txt.FontFace.Metrics().VAscent
+	txt.Dirty = true
+}
+
+func (r *Renderer) computeTextSize(txt *component.Text) {
+	if txt.Width != 0 && txt.Height != 0 && !txt.Dirty {
+		return
+	}
+
+	txt.Width, txt.Height = text.Measure(txt.GetValue(), txt.FontFace, 0)
 }

@@ -6,8 +6,6 @@ type Position struct {
 	RelX, RelY float64
 }
 
-const PositionNone = -1
-
 func NewPosition(x, y float64) *Position {
 	return &Position{
 		RelX: x,
