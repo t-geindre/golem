@@ -7,10 +7,13 @@ import (
 )
 
 type SpriteRenderer struct {
+	*Renderer
 }
 
 func NewSpriteRenderer() *SpriteRenderer {
-	return &SpriteRenderer{}
+	return &SpriteRenderer{
+		Renderer: NewRenderer(),
+	}
 }
 
 func (r *SpriteRenderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
@@ -20,4 +23,8 @@ func (r *SpriteRenderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.Worl
 	if pos == nil || spr == nil {
 		return
 	}
+
+	opts := r.getDrawOpts(e, w, pos, spr.Img.Bounds())
+
+	screen.DrawImage(spr.Img, opts)
 }

@@ -1,9 +1,9 @@
 package entity
 
 import (
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/pkg/golem"
-	"golang.org/x/image/font/sfnt"
 	"image/color"
 )
 
@@ -14,10 +14,10 @@ type Text struct {
 	*component.Color
 }
 
-func NewText(l golem.LayerID, text string, x, y, ox, oy float64, font *sfnt.Font, size float64, col color.RGBA) *Text {
+func NewText(l golem.LayerID, text string, x, y, ox, oy float64, face text.Face, col color.RGBA) *Text {
 	return &Text{
 		Entity:   golem.NewEntity(l),
-		Text:     component.NewText(text, font, size),
+		Text:     component.NewText(text, face),
 		Position: component.NewPosition(x, y, ox, oy),
 		Color:    component.NewColor(col),
 	}

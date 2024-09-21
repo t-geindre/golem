@@ -17,6 +17,6 @@ func NewGame(ww, wh int) *Game {
 	}
 }
 
-func (g Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
+func (g Game) Layout(_, _ int) (screenWidth, screenHeight int) {
 	return g.ww, g.wh
 }

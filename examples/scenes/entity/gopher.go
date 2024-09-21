@@ -10,6 +10,7 @@ type Gopher struct {
 	*component.Position
 	*component.Sprite
 	*component.Animation
+	*component.Scale
 }
 
 func NewGopher(l golem.LayerID, fs ...component.Frame) *Gopher {
@@ -18,5 +19,6 @@ func NewGopher(l golem.LayerID, fs ...component.Frame) *Gopher {
 		Position:  component.NewPosition(.5, .5, .5, .5),
 		Sprite:    component.NewSprite(fs[0].Img),
 		Animation: component.NewAnimation(fs...),
+		Scale:     component.NewScale(2, .5, .5),
 	}
 }

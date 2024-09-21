@@ -20,9 +20,9 @@ func main() {
 	mw, mh := ebiten.Monitor().Size()
 
 	ebiten.SetWindowTitle("Golem example - Scenes")
-	ebiten.SetWindowSize(mw, mh)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetVsyncEnabled(false)
+	ebiten.SetFullscreen(true)
 
 	g := NewGame(mw, mh)
 	g.World.AddLayers(LayerBackground, LayerScenes, LayerDebug)
