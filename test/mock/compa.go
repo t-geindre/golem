@@ -1,6 +1,6 @@
 package mock
 
-//go:generate golem testutils CompA
+//go:generate golem mock CompA
 type CompA struct {
 	Value float64
 }

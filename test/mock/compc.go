@@ -1,6 +1,6 @@
 package mock
 
-//go:generate golem testutils CompC
+//go:generate golem mock CompC
 type CompC struct {
 	Value float64
 }
