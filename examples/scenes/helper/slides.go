@@ -5,9 +5,9 @@ import (
 	"github.com/t-geindre/golem/examples/scenes/entity"
 	"github.com/t-geindre/golem/examples/scenes/system"
 	"github.com/t-geindre/golem/pkg/golem"
-	"golang.org/x/image/colornames"
 	"golang.org/x/image/font/sfnt"
 	"image/color"
+	"math/rand"
 	"os"
 	"time"
 )
@@ -19,21 +19,29 @@ func GetSlides(l golem.LayerID) []golem.Entity {
 
 	for _, es := range [][]golem.Entity{
 		{
-			entity.NewText(LayerAll, "Slide one", .5, .5, getFontFace(), 12, color.RGBA{R: 23, G: 43, B: 77, A: 0xff}),
+			entity.NewText(LayerAll, "Games with GO", .5, .3, .5, .5, getFontFace(), 15, color.RGBA{R: 0x17, G: 0x2b, B: 0x4d, A: 0xff}),
+			entity.NewGopher(LayerAll, component.NewFrame(Assets[0], time.Second*3), component.NewFrame(Assets[1], time.Millisecond*200)),
+			entity.NewText(LayerAll, "Why not?", .5, .65, .5, .5, getFontFace(), 10, color.RGBA{R: 0x49, G: 0x90, B: 0xf9, A: 0xff}),
 		},
 		{
-			entity.NewText(LayerAll, "Games in GO?!", .5, .1, getFontFace(), 20, colornames.Red),
-			entity.NewText(LayerAll, "Ho!", .5, .7, getFontFace(), 30, colornames.Black),
+			entity.NewText(LayerAll, "Suitable for games?", .5, .4, .5, .5, getFontFace(), 15, color.RGBA{R: 0x17, G: 0x2b, B: 0x4d, A: 0xff}),
+			entity.NewText(LayerAll, "It... depends!", .5, .6, .5, .5, getFontFace(), 10, color.RGBA{R: 0x49, G: 0x90, B: 0xf9, A: 0xff}),
 		},
 		{
-			entity.NewText(LayerAll, "Slide three", .5, .5, getFontFace(), 24, color.RGBA{R: 23, G: 43, B: 77, A: 0xff}),
+			entity.NewText(LayerAll, "What do you need?", .5, .2, .5, .5, getFontFace(), 15, color.RGBA{R: 0x17, G: 0x2b, B: 0x4d, A: 0xff}),
+			entity.NewText(LayerAll, "• Performances", .3, .5, 0, .5, getFontFace(), 10, color.RGBA{R: 0x49, G: 0x90, B: 0xf9, A: 0xff}),
+			entity.NewText(LayerAll, "• Ecosystem", .3, .65, 0, .5, getFontFace(), 10, color.RGBA{R: 0x49, G: 0x90, B: 0xf9, A: 0xff}),
 		},
 		{
-			entity.NewText(LayerAll, "• List item one", .5, .5, getFontFace(), 20, color.RGBA{R: 23, G: 43, B: 77, A: 0xff}),
-			entity.NewText(LayerAll, "• List item two", .5, .7, getFontFace(), 20, color.RGBA{R: 23, G: 43, B: 77, A: 0xff}),
+			entity.NewText(LayerAll, "Performances", .5, .4, .5, .5, getFontFace(), 15, color.RGBA{R: 0x17, G: 0x2b, B: 0x4d, A: 0xff}),
+			entity.NewText(LayerAll, "GO vs C++ vs Rust VS C#", .5, .6, .5, .5, getFontFace(), 10, color.RGBA{R: 0x49, G: 0x90, B: 0xf9, A: 0xff}),
 		},
 	} {
-		slides = append(slides, GetSlide(l, "Slide", TransitionFade, time.Millisecond*150, es...))
+		trans := []component.TransitionFunc{
+			TransitionFade,
+			TransitionScale,
+		}[rand.Intn(2)]
+		slides = append(slides, GetSlide(l, "Slide", trans, time.Millisecond*200, es...))
 	}
 
 	return slides
@@ -44,7 +52,10 @@ func GetSlide(l golem.LayerID, n string, t component.TransitionFunc, td time.Dur
 	se.Lifecycle.SetUp = func() {
 		se.World.AddLayers(LayerAll)
 		se.World.AddEntities(es...)
-		se.AddSystem(system.NewRenderer())
+		se.AddSystems(
+			system.NewRenderer(),
+			system.NewAnimation(),
+		)
 	}
 	se.Lifecycle.TearDown = func() {
 		se.World.Clear()

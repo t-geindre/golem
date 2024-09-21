@@ -2,7 +2,6 @@ package helper
 
 import (
 	"bytes"
-	_ "embed"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/t-geindre/golem/examples/scenes/assets"
