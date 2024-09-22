@@ -49,7 +49,6 @@ func main() {
 
 	ebiten.SetWindowTitle("Golem example - Scenes")
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
-	ebiten.SetVsyncEnabled(false)
 
 	g := NewGame(mw, mh)
 	g.World.AddLayers(LayerBackground, LayerScenes, LayerDebug)
