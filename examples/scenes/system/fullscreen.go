@@ -10,7 +10,9 @@ type Fullscreen struct {
 }
 
 func NewFullscreen() *Fullscreen {
-	return &Fullscreen{}
+	f := &Fullscreen{}
+	f.setFullscreen(true)
+	return f
 }
 
 func (f *Fullscreen) UpdateOnce(w golem.World) {

@@ -28,7 +28,11 @@ func main() {
 		panic(err)
 	}
 
-	os.Chdir(filepath.Dir(filePath))
+	err = os.Chdir(filepath.Dir(filePath))
+	if err != nil {
+		panic(err)
+	}
+
 	xml, err := helper.ParseXML(file)
 	_ = file.Close()
 	if err != nil {
@@ -46,7 +50,6 @@ func main() {
 	ebiten.SetWindowTitle("Golem example - Scenes")
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetVsyncEnabled(false)
-	ebiten.SetFullscreen(true)
 
 	g := NewGame(mw, mh)
 	g.World.AddLayers(LayerBackground, LayerScenes, LayerDebug)
@@ -58,5 +61,5 @@ func main() {
 		golemutils.NewMetrics(LayerDebug, time.Millisecond*100),
 	)
 
-	ebiten.RunGame(g)
+	_ = ebiten.RunGame(g)
 }
