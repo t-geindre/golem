@@ -32,7 +32,7 @@ func (r *Renderer) getDrawOpts(
 	r.applyOpts(e, opts, bds)
 	r.applyOpts(w.GetParentEntity(), opts, bds)
 
-	hw, hh := float64(bds.Dx())*pos.OrigX, float64(bds.Dy())*pos.OrigY
+	hw, hh := float64(bds.Dx())*pos.OriginX, float64(bds.Dy())*pos.OriginY
 	opts.GeoM.Translate(pos.RelX*r.ww-hw, pos.RelY*r.wh-hh)
 
 	return opts

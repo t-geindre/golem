@@ -18,12 +18,14 @@ const (
 )
 
 func main() {
-	file, err := os.Open("assets/slides.xml")
+	filePath := "assets/slides.xml"
+
+	file, err := helper.OpenFile(filePath)
 	if err != nil {
 		panic(err)
 	}
 
-	os.Chdir(filepath.Dir(file.Name()))
+	os.Chdir(filepath.Dir(filePath))
 	xml, err := helper.ParseXML(file)
 	_ = file.Close()
 	if err != nil {

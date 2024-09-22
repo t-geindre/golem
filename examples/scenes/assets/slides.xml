@@ -12,26 +12,26 @@
                 pos-y="50"
                 pos-orig-x="50"
                 pos-orig-y="50"
-                font="TruenoSemibold-Z9yl.otf"
-                font-size="48"
+                font="font.otf"
+                font-size="30"
                 color="#172b4d"
         />
     </styles>
     <transitions>
         <transition name="none" type="none" />
-        <transition name="fade" type="fade" duration="200" />
-        <transition name="scale" type="scale" duration="200" orig-x="50" orig-y="50" />
+        <transition name="fade" type="fade" duration="150" />
+        <transition name="scale" type="scale" duration="150" orig-x="50" orig-y="50" />
     </transitions>
     <slides>
         <slide name="intro" transition="fade">
-            <text style="title">Slide 1</text>
+            <text style="title" font-size="100">Slide 1</text>
             <img src="assets/image1.jpg" pos-x="50" pos-y="50" scale="1.2" />
             <animation src="assets/image1.jpg" loop="true" scale="1.2">
                 <frame min-x="0*96" min-y="0*96" max-x="1*96" max-y="1*96" duration="200" />
             </animation>
         </slide>
-        <slide name="another-slide" transition="fade">
-            <text style="title">Slide 2</text>
+        <slide name="another-slide" transition="scale">
+            <text style="title" pos-y="60" color="red" scale="4">Slide 2</text>
         </slide>
     </slides>
 </slideshow>

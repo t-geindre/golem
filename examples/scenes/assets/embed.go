@@ -1,8 +1,9 @@
 package assets
 
-import _ "embed"
+import (
+	"embed"
+	_ "embed"
+)
 
-//go:embed gophers.png
-var Gophers []byte
-
-const Size = 96
+//go:embed *.png *.otf
+var Embedded embed.FS

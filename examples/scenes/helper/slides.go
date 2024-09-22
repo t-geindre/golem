@@ -51,13 +51,11 @@ func (sl *SlideLoader) LoadXML(node *Node) error {
 	sl.stylesLoader.SetScale(sl.scale)
 
 	stylesNode, err := node.GetChild("styles")
-	if err != nil {
-		return err
-	}
-
-	err = sl.stylesLoader.LoadXML(stylesNode)
-	if err != nil {
-		return err
+	if err == nil {
+		err = sl.stylesLoader.LoadXML(stylesNode)
+		if err != nil {
+			return err
+		}
 	}
 
 	transNode, err := node.GetChild("transitions")
@@ -149,15 +147,31 @@ func (sl *SlideLoader) GetXmlSlideEntities(node *Node) ([]golem.Entity, error) {
 	entities := make([]golem.Entity, 0)
 
 	for _, eNode := range node.Children {
+		var en golem.Entity
+
 		switch eNode.GetName() {
 		case "text":
-			en := entity.NewText(sl.layer, eNode.GetContent())
-			err := sl.stylesLoader.ApplyStyle(en, eNode.GetAttr("style"))
-			if err != nil {
-				return nil, err
-			}
-			entities = append(entities, en)
+			en = entity.NewText(sl.layer, eNode.GetContent())
+		default:
+			continue // todo raise error as soon as all entities are implemented
 		}
+
+		baseStyle, err := sl.stylesLoader.GetNamedStyle(eNode.GetAttr("style"))
+		if err != nil {
+			return nil, err
+		}
+
+		nodeStyle, err := sl.stylesLoader.GetXMLStyle(eNode)
+		if err != nil {
+			return nil, err
+		}
+
+		err = sl.stylesLoader.ApplyStyles(en, baseStyle, nodeStyle)
+		if err != nil {
+			return nil, err
+		}
+
+		entities = append(entities, en)
 	}
 
 	return entities, nil

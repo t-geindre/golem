@@ -11,6 +11,8 @@ type Text struct {
 	*component.Text
 	*component.Position
 	*component.Color
+	*component.Scale
+	*component.Opacity
 }
 
 func NewText(l golem.LayerID, text string) *Text {
@@ -19,5 +21,7 @@ func NewText(l golem.LayerID, text string) *Text {
 		Text:     component.NewText(text),
 		Position: component.NewPosition(.5, .5, .5, .5),
 		Color:    component.NewColor(colornames.Black),
+		Scale:    component.NewScale(1, .5, .5),
+		Opacity:  component.NewOpacity(1),
 	}
 }
