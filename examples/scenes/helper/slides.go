@@ -21,17 +21,19 @@ type SlideLoader struct {
 	transLoader        *TransitionLoader
 	stylesLoader       *StyleLoader
 	backgroundColor    color.Color
+	entityBuilder      *EntityBuilder
 }
 
 func NewSlideLoader(l golem.LayerID) *SlideLoader {
 	dX, dY := ebiten.Monitor().Size()
 
 	return &SlideLoader{
-		layer:        l,
-		displayX:     float64(dX),
-		displayY:     float64(dY),
-		transLoader:  NewTransitionLoader(),
-		stylesLoader: NewStyleLoader(),
+		layer:         l,
+		displayX:      float64(dX),
+		displayY:      float64(dY),
+		transLoader:   NewTransitionLoader(),
+		stylesLoader:  NewStyleLoader(),
+		entityBuilder: NewEntityBuilder(),
 	}
 }
 
@@ -147,13 +149,9 @@ func (sl *SlideLoader) GetXmlSlideEntities(node *Node) ([]golem.Entity, error) {
 	entities := make([]golem.Entity, 0)
 
 	for _, eNode := range node.Children {
-		var en golem.Entity
-
-		switch eNode.GetName() {
-		case "text":
-			en = entity.NewText(sl.layer, eNode.GetContent())
-		default:
-			continue // todo raise error as soon as all entities are implemented
+		en, err := sl.entityBuilder.BuildFromXMLNode(sl.layer, eNode)
+		if err != nil {
+			return nil, err
 		}
 
 		baseStyle, err := sl.stylesLoader.GetNamedStyle(eNode.GetAttr("style"))

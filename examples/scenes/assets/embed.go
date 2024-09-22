@@ -5,5 +5,5 @@ import (
 	_ "embed"
 )
 
-//go:embed *.png *.otf
+//go:embed *.png *.otf *.xml
 var Embedded embed.FS

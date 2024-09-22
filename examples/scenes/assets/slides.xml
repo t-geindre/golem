@@ -1,21 +1,7 @@
 <slideshow width="1000" height="562" background-color="#f5f9ff">
-    <!--
-    Palette
-        #172b4d Title
-        #4990f9 Text
-        #f5f9ff BG
-    -->
     <styles>
-        <style
-                name="title"
-                pos-x="50"
-                pos-y="50"
-                pos-orig-x="50"
-                pos-orig-y="50"
-                font="font.otf"
-                font-size="30"
-                color="#172b4d"
-        />
+        <style name="title" pos-x="50" pos-y="50" pos-orig-x="50" pos-orig-y="50" font-size="70" color="#172b4d"/>
+        <style name="text" pos-x="50" pos-y="50" pos-orig-x="50" pos-orig-y="50" font-size="50" color="#4990f9"/>
     </styles>
     <transitions>
         <transition name="none" type="none" />
@@ -24,14 +10,20 @@
     </transitions>
     <slides>
         <slide name="intro" transition="fade">
-            <text style="title" font-size="100">Slide 1</text>
-            <img src="assets/image1.jpg" pos-x="50" pos-y="50" scale="1.2" />
-            <animation src="assets/image1.jpg" loop="true" scale="1.2">
-                <frame min-x="0*96" min-y="0*96" max-x="1*96" max-y="1*96" duration="200" />
+            <text style="title" pos-y="30">GO to make games</text>
+            <animation src="embd://gophers.png" tw="96" th="96" scale="2" pos-y="52.5">
+                <frame tx="0" ty="0" duration="2000" />
+                <frame tx="0" ty="1" duration="200" />
             </animation>
+            <text style="text" pos-y="70">Why note?</text>
         </slide>
-        <slide name="another-slide" transition="scale">
-            <text style="title" pos-y="60" color="red" scale="4">Slide 2</text>
+        <slide name="slide2" transition="scale">
+            <text style="title" pos-y="30">Scale transition</text>
+            <animation src="embd://gophers.png" tw="96" th="96" scale="2" pos-y="52.5">
+                <frame tx="0" ty="0" duration="2000" />
+                <frame tx="0" ty="1" duration="200" />
+            </animation>
+            <text style="text" pos-y="70">OMG</text>
         </slide>
     </slides>
 </slideshow>

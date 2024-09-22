@@ -18,7 +18,10 @@ const (
 )
 
 func main() {
-	filePath := "assets/slides.xml"
+	filePath := "embd://slides.xml"
+	if len(os.Args) > 1 {
+		filePath = os.Args[1]
+	}
 
 	file, err := helper.OpenFile(filePath)
 	if err != nil {
