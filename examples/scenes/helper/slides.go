@@ -1,92 +1,168 @@
 package helper
 
 import (
-	"github.com/hajimehoshi/ebiten/v2/text/v2"
+	"fmt"
+	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/examples/scenes/entity"
 	"github.com/t-geindre/golem/examples/scenes/system"
 	"github.com/t-geindre/golem/pkg/golem"
-	"golang.org/x/image/font"
-	"golang.org/x/image/font/opentype"
-	"golang.org/x/image/font/sfnt"
 	"image/color"
-	"math/rand"
-	"os"
-	"time"
+	"math"
+	"strconv"
 )
 
-const LayerAll = 0
-
-func GetSlides(l golem.LayerID) []golem.Entity {
-	slides := make([]golem.Entity, 0)
-
-	for _, es := range [][]golem.Entity{
-		{
-			entity.NewText(LayerAll, "Games with GO", .5, .3, .5, .5, getFontFace(200), color.RGBA{R: 0x17, G: 0x2b, B: 0x4d, A: 0xff}),
-			entity.NewGopher(LayerAll, component.NewFrame(Assets[0], time.Second*3), component.NewFrame(Assets[1], time.Millisecond*200)),
-			entity.NewText(LayerAll, "Why not?", .5, .65, .5, .5, getFontFace(100), color.RGBA{R: 0x49, G: 0x90, B: 0xf9, A: 0xff}),
-		},
-		{
-			entity.NewText(LayerAll, "Suitable for games?", .5, .4, .5, .5, getFontFace(150), color.RGBA{R: 0x17, G: 0x2b, B: 0x4d, A: 0xff}),
-			entity.NewText(LayerAll, "It... depends!", .5, .6, .5, .5, getFontFace(100), color.RGBA{R: 0x49, G: 0x90, B: 0xf9, A: 0xff}),
-		},
-		{
-			entity.NewText(LayerAll, "What do you need?", .5, .2, .5, .5, getFontFace(150), color.RGBA{R: 0x17, G: 0x2b, B: 0x4d, A: 0xff}),
-			entity.NewText(LayerAll, "• Performances", .3, .5, 0, .5, getFontFace(100), color.RGBA{R: 0x49, G: 0x90, B: 0xf9, A: 0xff}),
-			entity.NewText(LayerAll, "• Ecosystem", .3, .65, 0, .5, getFontFace(100), color.RGBA{R: 0x49, G: 0x90, B: 0xf9, A: 0xff}),
-		},
-		{
-			entity.NewText(LayerAll, "Performances", .5, .4, .5, .5, getFontFace(150), color.RGBA{R: 0x17, G: 0x2b, B: 0x4d, A: 0xff}),
-			entity.NewText(LayerAll, "GO vs C++ vs Rust VS C#", .5, .6, .5, .5, getFontFace(100), color.RGBA{R: 0x49, G: 0x90, B: 0xf9, A: 0xff}),
-		},
-	} {
-		trans := []component.TransitionFunc{
-			TransitionFade,
-			TransitionScale,
-		}[rand.Intn(2)]
-		slides = append(slides, GetSlide(l, "Slide", trans, time.Millisecond*200, es...))
-	}
-
-	return slides
+type SlideLoader struct {
+	layer              golem.LayerID
+	layoutX, layoutY   float64
+	displayX, displayY float64
+	scale              float64
+	slides             []golem.Entity
+	transLoader        *TransitionLoader
+	stylesLoader       *StyleLoader
+	backgroundColor    color.Color
 }
 
-func GetSlide(l golem.LayerID, n string, t component.TransitionFunc, td time.Duration, es ...golem.Entity) golem.Entity {
-	se := entity.NewScene(l, n, t, td)
-	se.Lifecycle.SetUp = func() {
-		se.World.AddLayers(LayerAll)
-		se.World.AddEntities(es...)
-		se.AddSystems(
-			system.NewSpriteRenderer(),
-			system.NewTextRenderer(),
-			system.NewAnimation(),
+func NewSlideLoader(l golem.LayerID) *SlideLoader {
+	dX, dY := ebiten.Monitor().Size()
+
+	return &SlideLoader{
+		layer:        l,
+		displayX:     float64(dX),
+		displayY:     float64(dY),
+		transLoader:  NewTransitionLoader(),
+		stylesLoader: NewStyleLoader(),
+	}
+}
+
+func (sl *SlideLoader) GetBackgroundColor() color.Color {
+	return sl.backgroundColor
+}
+
+func (sl *SlideLoader) LoadXML(node *Node) error {
+	if node.GetName() != "slideshow" {
+		return fmt.Errorf("invalid node node: \"%s\", \"slideshow\" expected", node.GetName())
+	}
+
+	err := sl.LoadXMLLayout(node)
+	if err != nil {
+		return err
+	}
+	sl.stylesLoader.SetScale(sl.scale)
+
+	stylesNode, err := node.GetChild("styles")
+	if err != nil {
+		return err
+	}
+
+	err = sl.stylesLoader.LoadXML(stylesNode)
+	if err != nil {
+		return err
+	}
+
+	transNode, err := node.GetChild("transitions")
+	if err != nil {
+		return err
+	}
+
+	err = sl.transLoader.LoadXML(transNode)
+	if err != nil {
+		return err
+	}
+
+	sldNode, err := node.GetChild("slides")
+	if err != nil {
+		return err
+	}
+
+	return sl.LoadXMLSlides(sldNode)
+}
+
+func (sl *SlideLoader) LoadXMLLayout(node *Node) error {
+	var err error
+
+	sl.layoutX, err = strconv.ParseFloat(node.GetAttr("width"), 64)
+	if err != nil {
+		sl.layoutX = sl.displayX
+	}
+
+	sl.layoutY, err = strconv.ParseFloat(node.GetAttr("height"), 64)
+	if err != nil {
+		sl.layoutY = sl.displayY
+	}
+
+	sl.scale = math.Min(sl.displayX/sl.layoutX, sl.displayY/sl.layoutY)
+
+	bgColor := node.GetAttr("background-color")
+	if bgColor != "" {
+		sl.backgroundColor, err = sl.stylesLoader.ParseColor(bgColor)
+		if err != nil {
+			return err
+		}
+	} else {
+		sl.backgroundColor = color.Black
+	}
+
+	return nil
+}
+
+func (sl *SlideLoader) LoadXMLSlides(node *Node) error {
+	sl.slides = make([]golem.Entity, 0)
+
+	for _, sNode := range node.Children {
+		if sNode.GetName() != "slide" {
+			return fmt.Errorf("invalid node node: \"%s\", \"slide\" expected", sNode.GetName())
+		}
+
+		slide := entity.NewScene(sl.layer, sNode.GetAttr("name"))
+		err := sl.transLoader.ApplyTransition(slide, sNode.GetAttr("transition"))
+		if err != nil {
+			return err
+		}
+
+		entities, err := sl.GetXmlSlideEntities(sNode)
+		if err != nil {
+			return err
+		}
+
+		slide.Lifecycle = component.NewLifecycle(
+			func() {
+				slide.World.AddLayers(sl.layer)
+				slide.World.AddEntities(entities...)
+				slide.World.AddSystems(
+					system.NewAnimation(),
+					system.NewSpriteRenderer(),
+					system.NewTextRenderer(),
+				)
+			},
+			func() {
+				slide.World.Clear()
+			},
 		)
-	}
-	se.Lifecycle.TearDown = func() {
-		se.World.Clear()
-	}
 
-	return se
+		sl.slides = append(sl.slides, slide)
+	}
+	return nil
 }
 
-func getFontFace(size float64) text.Face {
-	bts, err := os.ReadFile("assets/TruenoSemibold-Z9yl.otf")
-	if err != nil {
-		panic(err)
+func (sl *SlideLoader) GetXmlSlideEntities(node *Node) ([]golem.Entity, error) {
+	entities := make([]golem.Entity, 0)
+
+	for _, eNode := range node.Children {
+		switch eNode.GetName() {
+		case "text":
+			en := entity.NewText(sl.layer, eNode.GetContent())
+			err := sl.stylesLoader.ApplyStyle(en, eNode.GetAttr("style"))
+			if err != nil {
+				return nil, err
+			}
+			entities = append(entities, en)
+		}
 	}
 
-	ft, err := sfnt.Parse(bts)
-	if err != nil {
-		panic(err)
-	}
+	return entities, nil
+}
 
-	face, err := opentype.NewFace(ft, &opentype.FaceOptions{
-		Size:    size,
-		DPI:     72,
-		Hinting: font.HintingFull,
-	})
-	if err != nil {
-		panic(err)
-	}
-
-	return text.NewGoXFace(face)
+func (sl *SlideLoader) GetSlides(l golem.LayerID) []golem.Entity {
+	return sl.slides
 }

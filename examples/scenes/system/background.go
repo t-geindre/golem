@@ -7,11 +7,11 @@ import (
 )
 
 type Background struct {
-	color color.RGBA
+	color color.Color
 	layer golem.LayerID
 }
 
-func NewBackground(l golem.LayerID, c color.RGBA) *Background {
+func NewBackground(l golem.LayerID, c color.Color) *Background {
 	return &Background{
 		color: c,
 		layer: l,

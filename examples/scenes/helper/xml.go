@@ -2,6 +2,7 @@ package helper
 
 import (
 	"encoding/xml"
+	"fmt"
 	"io"
 	"strings"
 )
@@ -13,26 +14,19 @@ type Node struct {
 	Content  []byte     `xml:",chardata"`
 }
 
-func ParseXML(r io.Reader) *Node {
+func ParseXML(r io.Reader) (*Node, error) {
 	var dom *Node
 	b, err := io.ReadAll(r)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	err = xml.Unmarshal(b, &dom)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return dom
-}
-
-func NewEmptyNode() *Node {
-	return &Node{
-		Attrs:    make([]xml.Attr, 0),
-		Children: make([]*Node, 0),
-	}
+	return dom, nil
 }
 
 func (n *Node) GetName() string {
@@ -49,17 +43,17 @@ func (n *Node) GetAttr(name string) string {
 	return ""
 }
 
-func (n *Node) GetChild(name string) *Node {
+func (n *Node) GetChild(name string) (*Node, error) {
 	for _, child := range n.Children {
 		if child.GetName() == name {
-			return child
+			return child, nil
 		}
 	}
 
-	return NewEmptyNode()
+	return nil, fmt.Errorf("child node not found: %s", name)
 }
 
-func (n *Node) GetChildWithAttrs(name string, attrs ...string) *Node {
+func (n *Node) GetChildWithAttrs(name string, attrs ...string) (*Node, error) {
 	if len(attrs)%2 != 0 {
 		panic("attrs must be a list of key-value pairs")
 	}
@@ -73,12 +67,13 @@ func (n *Node) GetChildWithAttrs(name string, attrs ...string) *Node {
 				}
 			}
 			if found {
-				return child
+				return child, nil
 			}
 		}
 	}
 
-	return NewEmptyNode()
+	// Todo improve error message to display the expected attributes
+	return nil, fmt.Errorf("child node not found: %s", name)
 }
 
 func (n *Node) GetContent() string {

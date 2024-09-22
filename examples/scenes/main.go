@@ -6,7 +6,8 @@ import (
 	"github.com/t-geindre/golem/examples/scenes/system"
 	"github.com/t-geindre/golem/pkg/golem"
 	"github.com/t-geindre/golem/pkg/golemutils"
-	"image/color"
+	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -17,6 +18,24 @@ const (
 )
 
 func main() {
+	file, err := os.Open("assets/slides.xml")
+	if err != nil {
+		panic(err)
+	}
+
+	os.Chdir(filepath.Dir(file.Name()))
+	xml, err := helper.ParseXML(file)
+	_ = file.Close()
+	if err != nil {
+		panic(err)
+	}
+
+	loader := helper.NewSlideLoader(LayerScenes)
+	err = loader.LoadXML(xml)
+	if err != nil {
+		panic(err)
+	}
+
 	mw, mh := ebiten.Monitor().Size()
 
 	ebiten.SetWindowTitle("Golem example - Scenes")
@@ -28,9 +47,9 @@ func main() {
 	g.World.AddLayers(LayerBackground, LayerScenes, LayerDebug)
 
 	g.World.AddSystems(
-		system.NewBackground(LayerBackground, color.RGBA{R: 0xf4, G: 0xf9, B: 0xff, A: 0xff}),
+		system.NewBackground(LayerBackground, loader.GetBackgroundColor()),
 		system.NewFullscreen(),
-		system.NewScene(LayerDebug, helper.GetSlides(LayerScenes)...),
+		system.NewScene(LayerDebug, loader.GetSlides(LayerScenes)...),
 		golemutils.NewMetrics(LayerDebug, time.Millisecond*100),
 	)
 

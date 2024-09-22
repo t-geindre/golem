@@ -3,7 +3,6 @@ package entity
 import (
 	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/pkg/golem"
-	"time"
 )
 
 type Scene struct {
@@ -16,15 +15,13 @@ type Scene struct {
 	*component.Lifecycle
 }
 
-func NewScene(l golem.LayerID, n string, t component.TransitionFunc, d time.Duration) *Scene {
+func NewScene(l golem.LayerID, name string) *Scene {
 	s := &Scene{
-		Entity:     golem.NewEntity(l),
-		World:      golem.NewWorld(),
-		Scene:      component.NewScene(n),
-		Opacity:    component.NewOpacity(1),
-		Scale:      component.NewScale(1, 0.5, 0.5),
-		Transition: component.NewTransition(t, d),
-		Lifecycle:  component.NewLifecycle(),
+		Entity:  golem.NewEntity(l),
+		World:   golem.NewWorld(),
+		Scene:   component.NewScene(name),
+		Opacity: component.NewOpacity(1),
+		Scale:   component.NewScale(1, .5, .5),
 	}
 
 	return s

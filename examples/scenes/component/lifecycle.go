@@ -6,6 +6,9 @@ type Lifecycle struct {
 	TearDown func()
 }
 
-func NewLifecycle() *Lifecycle {
-	return &Lifecycle{}
+func NewLifecycle(setup, teardown func()) *Lifecycle {
+	return &Lifecycle{
+		SetUp:    setup,
+		TearDown: teardown,
+	}
 }
