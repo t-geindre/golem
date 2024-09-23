@@ -149,11 +149,26 @@ func (sl *StyleLoader) ApplyStyles(e golem.Entity, sts ...*Style) error {
 		}
 	}
 
+	txt := component.GetText(e)
+	if txt != nil {
+		face, err := sl.getFontFace(*st.FontSource, *st.FontSize)
+		if err != nil {
+			return err
+		}
+		txt.Face = face
+	}
+
 	scl := component.GetScale(e)
 	if scl != nil {
-		if st.Scale != nil {
-			scl.Value = *st.Scale
+		scale := 1.0
+		if txt == nil {
+			// on text components, the scale is applied to the font size
+			scale = sl.scale
 		}
+		if st.Scale != nil {
+			scale *= *st.Scale
+		}
+		scl.Value = scale
 		if st.ScaleOriginX != nil {
 			scl.OriginX = *st.ScaleOriginX
 		}
@@ -161,7 +176,6 @@ func (sl *StyleLoader) ApplyStyles(e golem.Entity, sts ...*Style) error {
 			scl.OriginY = *st.ScaleOriginY
 		}
 	}
-
 	op := component.GetOpacity(e)
 	if op != nil && st.Opacity != nil {
 		op.Value = float32(*st.Opacity)
@@ -170,15 +184,6 @@ func (sl *StyleLoader) ApplyStyles(e golem.Entity, sts ...*Style) error {
 	col := component.GetColor(e)
 	if col != nil && st.Color != nil {
 		col.Value = st.Color
-	}
-
-	txt := component.GetText(e)
-	if txt != nil {
-		face, err := sl.getFontFace(*st.FontSource, *st.FontSize)
-		if err != nil {
-			return err
-		}
-		txt.Face = face
 	}
 
 	return nil
@@ -246,8 +251,8 @@ func (sl *StyleLoader) getFontFace(path string, size float64) (text.Face, error)
 	}
 
 	face, err := opentype.NewFace(ft, &opentype.FaceOptions{
-		Size:    size * sl.scale,
-		DPI:     72,
+		Size:    size,
+		DPI:     72 * sl.scale,
 		Hinting: font.HintingFull,
 	})
 	if err != nil {

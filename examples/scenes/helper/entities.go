@@ -66,7 +66,11 @@ func (eb *EntityBuilder) buildList(l golem.LayerID, node *Node) (golem.Entity, e
 }
 
 func (eb *EntityBuilder) buildText(l golem.LayerID, node *Node) (golem.Entity, error) {
-	return entity.NewText(l, node.GetContent()), nil
+	parts := strings.Split(node.GetContent(), "\n")
+	for i, part := range parts {
+		parts[i] = strings.TrimSpace(part)
+	}
+	return entity.NewText(l, strings.Join(parts, "\n")), nil
 }
 
 func (eb *EntityBuilder) buildImage(l golem.LayerID, node *Node) (golem.Entity, error) {
