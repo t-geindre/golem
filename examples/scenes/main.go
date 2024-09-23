@@ -23,6 +23,10 @@ func main() {
 		filePath = os.Args[1]
 	}
 
+	if helper.FileExists("slides.xml") {
+		filePath = "slides.xml"
+	}
+
 	file, err := helper.OpenFile(filePath)
 	if err != nil {
 		panic(err)

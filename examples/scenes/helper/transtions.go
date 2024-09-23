@@ -6,6 +6,7 @@ import (
 	"github.com/t-geindre/golem/examples/scenes/entity"
 	"github.com/t-geindre/golem/pkg/golem"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -45,13 +46,25 @@ func (tl *TransitionLoader) LoadXML(node *Node) error {
 			return fmt.Errorf("duplicated transition name: \"%s\"", name)
 		}
 
-		tType := tNode.GetAttr("type")
-		if tType == "" {
+		tTypes := strings.Split(tNode.GetAttr("type"), ",")
+		if len(tTypes) == 0 {
 			return fmt.Errorf("missing attribute \"type\" in node \"transition\"")
 		}
-		trans, ok := tl.TransMap[tType]
-		if !ok {
-			return fmt.Errorf("unknown transition type: \"%s\"", tType)
+
+		transFs := make([]component.TransitionFunc, 0, len(tTypes))
+		for _, tType := range tTypes {
+			trans, ok := tl.TransMap[strings.TrimSpace(tType)]
+			if !ok {
+				return fmt.Errorf("unknown transition type: \"%s\"", tType)
+			}
+			transFs = append(transFs, trans)
+		}
+
+		var trans component.TransitionFunc
+		if len(transFs) == 1 {
+			trans = transFs[0]
+		} else {
+			trans = TransitionMulti(transFs)
 		}
 
 		dAttr := tNode.GetAttr("duration")
@@ -97,6 +110,14 @@ func TransitionScale(entity golem.Entity, v float64) {
 	scale := component.GetScale(entity)
 	if scale != nil {
 		scale.Value = v
+	}
+}
+
+func TransitionMulti(ts []component.TransitionFunc) component.TransitionFunc {
+	return func(e golem.Entity, v float64) {
+		for _, t := range ts {
+			t(e, v)
+		}
 	}
 }
 

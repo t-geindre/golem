@@ -21,3 +21,13 @@ func OpenFile(path string) (fs.File, error) {
 		return os.Open(path)
 	}
 }
+
+func FileExists(path string) bool {
+	if path[0:7] == "embd://" {
+		_, err := assets.Embedded.ReadFile(path[7:])
+		return err == nil
+	} else {
+		_, err := os.Stat(path)
+		return err == nil
+	}
+}
