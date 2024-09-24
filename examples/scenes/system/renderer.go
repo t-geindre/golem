@@ -60,7 +60,6 @@ func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions) {
 		opts.GeoM.Translate(-float64(bds.Dx())/2, -float64(bds.Dy())/2)
 		opts.GeoM.Rotate(rot.Angle)
 		opts.GeoM.Translate(float64(bds.Dx())/2, float64(bds.Dy())/2)
-		opts.Filter = ebiten.FilterLinear // Improve rendering quality
 	}
 
 	op := component.GetOpacity(e)
