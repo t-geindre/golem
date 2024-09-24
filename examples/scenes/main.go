@@ -8,6 +8,7 @@ import (
 	"github.com/t-geindre/golem/pkg/golemutils"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -32,7 +33,9 @@ func main() {
 		panic(err)
 	}
 
-	err = os.Chdir(filepath.Dir(filePath))
+	err = os.Chdir(filepath.Dir(
+		strings.Replace(filePath, "embd://", "", 1),
+	))
 	if err != nil {
 		panic(err)
 	}
