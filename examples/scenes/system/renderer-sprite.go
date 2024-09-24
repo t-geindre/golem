@@ -10,9 +10,9 @@ type SpriteRenderer struct {
 	*Renderer
 }
 
-func NewSpriteRenderer() *SpriteRenderer {
+func NewSpriteRenderer(srw, srh float64) *SpriteRenderer {
 	return &SpriteRenderer{
-		Renderer: NewRenderer(),
+		Renderer: NewRenderer(srw, srh),
 	}
 }
 

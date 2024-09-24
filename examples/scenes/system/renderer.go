@@ -4,20 +4,37 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/pkg/golem"
+	"math"
+)
+
+const (
+	ScaleRefWidth  = 300.0
+	ScaleRefHeight = ScaleRefWidth * 16 / 9
 )
 
 type Renderer struct {
-	ww, wh float64
+	srw, srh float64
+	ww, wh   float64
+	scale    float64
 }
 
-func NewRenderer() *Renderer {
-	return &Renderer{}
+func NewRenderer(srw, srh float64) *Renderer {
+	return &Renderer{
+		srw: srw,
+		srh: srh,
+	}
 }
 
 func (r *Renderer) UpdateOnce(w golem.World) {
 	ww, wh := ebiten.Monitor().Size()
+	if !ebiten.IsFullscreen() {
+		ww, wh = ebiten.WindowSize()
+	}
+
 	wwf, whf := float64(ww), float64(wh)
 	r.ww, r.wh = wwf, whf
+
+	r.scale = math.Min(wwf/r.srw, whf/r.srh)
 }
 
 func (r *Renderer) getDrawOpts(
@@ -39,21 +56,25 @@ func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions) {
 
 	bds := component.GetBoundaries(e)
 
-	opacity := component.GetOpacity(e)
-	if opacity != nil {
-		opts.ColorScale.ScaleAlpha(opacity.Value)
+	op := component.GetOpacity(e)
+	if op != nil {
+		opts.ColorScale.ScaleAlpha(op.Value)
 	}
 
-	scale := component.GetScale(e)
-	if scale != nil && bds != nil {
-		v := scale.Value
+	scl := component.GetScale(e)
+	if scl != nil && bds != nil {
+		v := scl.Value
+		scrScale := component.GetScreenScale(e)
+		if scrScale != nil {
+			v = v * r.scale * scrScale.Value
+		}
 		if v < 0 {
 			v = 0
 		}
 		opts.GeoM.Scale(v, v)
 		opts.GeoM.Translate(
-			float64(bds.Dx())*scale.OriginX*(1-v),
-			float64(bds.Dy())*scale.OriginX*(1-v),
+			float64(bds.Dx())*scl.OriginX*(1-v),
+			float64(bds.Dy())*scl.OriginX*(1-v),
 		)
 	}
 

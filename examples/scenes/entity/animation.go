@@ -13,6 +13,7 @@ type Animation struct {
 	*component.Scale
 	*component.Opacity
 	*component.Boundaries
+	*component.ScreenScale
 }
 
 func NewAnimation(l golem.LayerID, fs ...component.Frame) *Animation {
@@ -26,5 +27,6 @@ func NewAnimation(l golem.LayerID, fs ...component.Frame) *Animation {
 		Boundaries: &component.Boundaries{
 			Rectangle: fs[0].Img.Bounds(),
 		},
+		ScreenScale: component.NewScreenScale(),
 	}
 }

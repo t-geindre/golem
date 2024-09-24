@@ -2,39 +2,35 @@ package helper
 
 import (
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/examples/scenes/entity"
 	"github.com/t-geindre/golem/examples/scenes/system"
 	"github.com/t-geindre/golem/pkg/golem"
 	"image/color"
-	"math"
 	"strconv"
 )
 
 type SlideLoader struct {
-	layer              golem.LayerID
-	layoutX, layoutY   float64
-	displayX, displayY float64
-	scale              float64
-	slides             []golem.Entity
-	transLoader        *TransitionLoader
-	stylesLoader       *StyleLoader
-	backgroundColor    color.Color
-	entityBuilder      *EntityBuilder
+	layer            golem.LayerID
+	layoutX, layoutY float64
+	slides           []golem.Entity
+	transLoader      *TransitionLoader
+	stylesLoader     *StyleLoader
+	backgroundColor  color.Color
+	entityBuilder    *EntityBuilder
 }
 
 func NewSlideLoader(l golem.LayerID) *SlideLoader {
-	dX, dY := ebiten.Monitor().Size()
-
 	return &SlideLoader{
 		layer:         l,
-		displayX:      float64(dX),
-		displayY:      float64(dY),
 		transLoader:   NewTransitionLoader(),
 		stylesLoader:  NewStyleLoader(),
 		entityBuilder: NewEntityBuilder(),
 	}
+}
+
+func (sl *SlideLoader) GetLayout() (float64, float64) {
+	return sl.layoutX, sl.layoutY
 }
 
 func (sl *SlideLoader) GetBackgroundColor() color.Color {
@@ -50,7 +46,6 @@ func (sl *SlideLoader) LoadXML(node *Node) error {
 	if err != nil {
 		return err
 	}
-	sl.stylesLoader.SetScale(sl.scale)
 
 	stylesNode, err := node.GetChild("styles")
 	if err == nil {
@@ -83,15 +78,13 @@ func (sl *SlideLoader) LoadXMLLayout(node *Node) error {
 
 	sl.layoutX, err = strconv.ParseFloat(node.GetAttr("width"), 64)
 	if err != nil {
-		sl.layoutX = sl.displayX
+		return fmt.Errorf("invalid layout width: %s", node.GetAttr("width"))
 	}
 
 	sl.layoutY, err = strconv.ParseFloat(node.GetAttr("height"), 64)
 	if err != nil {
-		sl.layoutY = sl.displayY
+		return fmt.Errorf("invalid layout height: %s", node.GetAttr("height"))
 	}
-
-	sl.scale = math.Min(sl.displayX/sl.layoutX, sl.displayY/sl.layoutY)
 
 	bgColor := node.GetAttr("background-color")
 	if bgColor != "" {
@@ -136,8 +129,8 @@ func (sl *SlideLoader) LoadXMLSlides(node *Node) error {
 				slide.World.AddEntities(entities...)
 				slide.World.AddSystems(
 					system.NewAnimation(),
-					system.NewSpriteRenderer(),
-					system.NewTextRenderer(),
+					system.NewSpriteRenderer(sl.layoutX, sl.layoutY),
+					system.NewTextRenderer(sl.layoutX, sl.layoutY),
 				)
 			},
 			func() {

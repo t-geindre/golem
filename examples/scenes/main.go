@@ -52,12 +52,11 @@ func main() {
 		panic(err)
 	}
 
-	mw, mh := ebiten.Monitor().Size()
-
 	ebiten.SetWindowTitle("Golem example - Scenes")
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
+	ebiten.SetVsyncEnabled(false)
 
-	g := NewGame(mw, mh)
+	g := golemutils.NewGame()
 	g.World.AddLayers(LayerBackground, LayerScenes, LayerDebug)
 
 	g.World.AddSystems(

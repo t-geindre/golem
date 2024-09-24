@@ -13,6 +13,7 @@ type Image struct {
 	*component.Scale
 	*component.Opacity
 	*component.Boundaries
+	*component.ScreenScale
 }
 
 func NewImage(l golem.LayerID, img *ebiten.Image) *Image {
@@ -25,5 +26,6 @@ func NewImage(l golem.LayerID, img *ebiten.Image) *Image {
 		Boundaries: &component.Boundaries{
 			Rectangle: img.Bounds(),
 		},
+		ScreenScale: component.NewScreenScale(),
 	}
 }

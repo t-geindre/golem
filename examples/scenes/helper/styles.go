@@ -2,12 +2,9 @@ package helper
 
 import (
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/pkg/golem"
 	"golang.org/x/image/colornames"
-	"golang.org/x/image/font"
-	"golang.org/x/image/font/opentype"
 	"golang.org/x/image/font/sfnt"
 	"image/color"
 	"reflect"
@@ -36,21 +33,13 @@ type Style struct {
 type StyleLoader struct {
 	styles map[string]*Style
 	fonts  map[string]*sfnt.Font
-	faces  map[string]text.Face
-	scale  float64
 }
 
 func NewStyleLoader() *StyleLoader {
 	return &StyleLoader{
 		styles: make(map[string]*Style),
 		fonts:  make(map[string]*sfnt.Font),
-		faces:  make(map[string]text.Face),
-		scale:  1,
 	}
-}
-
-func (sl *StyleLoader) SetScale(scale float64) {
-	sl.scale = scale
 }
 
 func (sl *StyleLoader) LoadXML(node *Node) error {
@@ -151,20 +140,17 @@ func (sl *StyleLoader) ApplyStyles(e golem.Entity, sts ...*Style) error {
 
 	txt := component.GetText(e)
 	if txt != nil {
-		face, err := sl.getFontFace(*st.FontSource, *st.FontSize)
+		ft, err := sl.getFont(*st.FontSource)
 		if err != nil {
 			return err
 		}
-		txt.Face = face
+		txt.Font = ft
+		txt.Size = *st.FontSize
 	}
 
 	scl := component.GetScale(e)
 	if scl != nil {
 		scale := 1.0
-		if txt == nil {
-			// on text components, the scale is applied to the font size
-			scale = sl.scale
-		}
 		if st.Scale != nil {
 			scale *= *st.Scale
 		}
@@ -190,7 +176,6 @@ func (sl *StyleLoader) ApplyStyles(e golem.Entity, sts ...*Style) error {
 }
 
 func (sl *StyleLoader) ParseColor(v string) (color.Color, error) {
-	// todo there must be a way to factorize this
 	if v[0] == '#' {
 		if len(v) == 7 {
 			r, err := strconv.ParseUint(v[1:3], 16, 8)
@@ -207,21 +192,6 @@ func (sl *StyleLoader) ParseColor(v string) (color.Color, error) {
 			}
 			return color.RGBA{R: uint8(r), G: uint8(g), B: uint8(b), A: 0xff}, nil
 		}
-		if len(v) == 4 {
-			r, err := strconv.ParseUint(v[1:2], 16, 8)
-			if err != nil {
-				return nil, err
-			}
-			g, err := strconv.ParseUint(v[2:3], 16, 8)
-			if err != nil {
-				return nil, err
-			}
-			b, err := strconv.ParseUint(v[3:4], 16, 8)
-			if err != nil {
-				return nil, err
-			}
-			return color.RGBA{R: uint8(r), G: uint8(g), B: uint8(b), A: 0xff}, nil
-		}
 	}
 	if c, ok := colornames.Map[v]; ok {
 		return c, nil
@@ -229,12 +199,7 @@ func (sl *StyleLoader) ParseColor(v string) (color.Color, error) {
 	return nil, fmt.Errorf("invalid color value: %s", v)
 }
 
-func (sl *StyleLoader) getFontFace(path string, size float64) (text.Face, error) {
-	fKey := fmt.Sprintf("%s-%f", path, size)
-	if f, ok := sl.faces[fKey]; ok {
-		return f, nil
-	}
-
+func (sl *StyleLoader) getFont(path string) (*sfnt.Font, error) {
 	ft, ok := sl.fonts[path]
 	if !ok {
 		bts, err := ReadFile(path)
@@ -250,17 +215,7 @@ func (sl *StyleLoader) getFontFace(path string, size float64) (text.Face, error)
 		sl.fonts[path] = ft
 	}
 
-	face, err := opentype.NewFace(ft, &opentype.FaceOptions{
-		Size:    size * sl.scale,
-		DPI:     72,
-		Hinting: font.HintingFull,
-	})
-	if err != nil {
-		return nil, err
-	}
-	sl.faces[fKey] = text.NewGoXFace(face)
-
-	return sl.faces[fKey], nil
+	return ft, nil
 }
 
 func (sl *StyleLoader) MergeStyles(styles []*Style) *Style {
