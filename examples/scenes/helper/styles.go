@@ -251,8 +251,8 @@ func (sl *StyleLoader) getFontFace(path string, size float64) (text.Face, error)
 	}
 
 	face, err := opentype.NewFace(ft, &opentype.FaceOptions{
-		Size:    size,
-		DPI:     72 * sl.scale,
+		Size:    size * sl.scale,
+		DPI:     72,
 		Hinting: font.HintingFull,
 	})
 	if err != nil {
