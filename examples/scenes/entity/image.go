@@ -12,6 +12,7 @@ type Image struct {
 	*component.Position
 	*component.Scale
 	*component.Opacity
+	*component.Boundaries
 }
 
 func NewImage(l golem.LayerID, img *ebiten.Image) *Image {
@@ -21,5 +22,8 @@ func NewImage(l golem.LayerID, img *ebiten.Image) *Image {
 		Position: component.NewPosition(.5, .5, .5, .5),
 		Scale:    component.NewScale(1, .5, .5),
 		Opacity:  component.NewOpacity(1),
+		Boundaries: &component.Boundaries{
+			Rectangle: img.Bounds(),
+		},
 	}
 }

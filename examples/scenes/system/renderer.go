@@ -24,7 +24,6 @@ func (r *Renderer) UpdateOnce(w golem.World) {
 func (r *Renderer) getDrawOpts(
 	e golem.Entity,
 	w golem.World,
-	pos *component.Position,
 	bds image.Rectangle,
 ) *ebiten.DrawImageOptions {
 	opts := &ebiten.DrawImageOptions{}
@@ -32,16 +31,15 @@ func (r *Renderer) getDrawOpts(
 	r.applyOpts(e, opts, bds)
 	r.applyOpts(w.GetParentEntity(), opts, bds)
 
-	hw, hh := float64(bds.Dx())*pos.OriginX, float64(bds.Dy())*pos.OriginY
-	opts.GeoM.Translate(pos.RelX*r.ww-hw, pos.RelY*r.wh-hh)
-
 	return opts
 }
 
-func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions, bds image.Rectangle) {
+func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions, _ image.Rectangle) {
 	if e == nil {
 		return
 	}
+
+	bds := component.GetBoundaries(e)
 
 	opacity := component.GetOpacity(e)
 	if opacity != nil {
@@ -49,7 +47,7 @@ func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions, bds 
 	}
 
 	scale := component.GetScale(e)
-	if scale != nil {
+	if scale != nil && bds != nil {
 		opts.GeoM.Scale(scale.Value, scale.Value)
 		opts.GeoM.Translate(
 			float64(bds.Dx())*scale.OriginX*(1-scale.Value),
@@ -60,5 +58,11 @@ func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions, bds 
 	color := component.GetColor(e)
 	if color != nil {
 		opts.ColorScale.ScaleWithColor(color.Value)
+	}
+
+	pos := component.GetPosition(e)
+	if pos != nil && bds != nil {
+		hw, hh := float64(bds.Dx())*pos.OriginX, float64(bds.Dy())*pos.OriginY
+		opts.GeoM.Translate(pos.RelX*r.ww-hw, pos.RelY*r.wh-hh)
 	}
 }

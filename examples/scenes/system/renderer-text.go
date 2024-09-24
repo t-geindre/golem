@@ -21,15 +21,16 @@ func NewTextRenderer() *TextRenderer {
 func (r *TextRenderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
 	pos := component.GetPosition(e)
 	txt := component.GetText(e)
+	bds := component.GetBoundaries(e)
 
-	if pos == nil || txt == nil {
+	if pos == nil || txt == nil || bds == nil {
 		return
 	}
 
-	r.computeBounds(txt)
+	r.computeBounds(txt, bds)
 
 	opts := &text.DrawOptions{
-		DrawImageOptions: *r.getDrawOpts(e, w, pos, txt.Bounds),
+		DrawImageOptions: *r.getDrawOpts(e, w, txt.Bounds),
 		LayoutOptions: text.LayoutOptions{
 			LineSpacing: txt.LineHeight,
 		},
@@ -38,8 +39,8 @@ func (r *TextRenderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World)
 	text.Draw(screen, txt.Text, txt.Face, opts)
 }
 
-func (r *TextRenderer) computeBounds(txt *component.Text) {
-	if !txt.Bounds.Empty() {
+func (r *TextRenderer) computeBounds(txt *component.Text, bds *component.Boundaries) {
+	if !bds.Empty() {
 		return
 	}
 
@@ -52,5 +53,7 @@ func (r *TextRenderer) computeBounds(txt *component.Text) {
 
 	w, h := text.Measure(txt.Text, txt.Face, txt.LineHeight)
 	txt.Bounds = image.Rect(0, 0, int(w), int(h))
+
+	bds.Rectangle = image.Rect(0, 0, int(w), int(h))
 
 }

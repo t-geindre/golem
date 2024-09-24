@@ -12,6 +12,7 @@ type Animation struct {
 	*component.Position
 	*component.Scale
 	*component.Opacity
+	*component.Boundaries
 }
 
 func NewAnimation(l golem.LayerID, fs ...component.Frame) *Animation {
@@ -22,5 +23,8 @@ func NewAnimation(l golem.LayerID, fs ...component.Frame) *Animation {
 		Position:  component.NewPosition(.5, .5, .5, .5),
 		Scale:     component.NewScale(1, .5, .5),
 		Opacity:   component.NewOpacity(1),
+		Boundaries: &component.Boundaries{
+			Rectangle: fs[0].Img.Bounds(),
+		},
 	}
 }

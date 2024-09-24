@@ -11,7 +11,7 @@ type Fullscreen struct {
 
 func NewFullscreen() *Fullscreen {
 	f := &Fullscreen{}
-	f.setFullscreen(true)
+	//f.setFullscreen(true)
 	return f
 }
 
