@@ -23,40 +23,50 @@
         <slide transition="fade">
             <text style="title">Fade</text>
             <animation src="embd://gophers.png" tw="96" th="96" pos-y="52.5">
-                <frame tx="0" ty="0" duration="2000" />
-                <frame tx="0" ty="1" duration="200" />
+                <frame tx="4" ty="3" duration="3000" />
+                <frame tx="5" ty="3" duration="3000" />
             </animation>
             <text style="text">Quadratic easing</text>
         </slide>
         <slide transition="scale">
             <text style="title">Scale</text>
             <animation src="embd://gophers.png" tw="96" th="96" pos-y="52.5">
-                <frame tx="0" ty="0" duration="2000" />
-                <frame tx="0" ty="1" duration="200" />
+                <frame tx="2" ty="3" duration="2000" />
+                <frame tx="3" ty="3" duration="200" />
             </animation>
             <text style="text">Cubic easing</text>
         </slide>
         <slide transition="vertical">
             <text style="title">Vertical</text>
             <animation src="embd://gophers.png" tw="96" th="96" pos-y="52.5">
-                <frame tx="0" ty="0" duration="2000" />
-                <frame tx="0" ty="1" duration="200" />
+                <frame tx="5" ty="1" duration="1000" />
+                <frame tx="6" ty="0" duration="500" />
+                <frame tx="5" ty="1" duration="1000" />
+                <frame tx="6" ty="1" duration="1000" />
+                <frame tx="5" ty="1" duration="1000" />
+                <frame tx="6" ty="1" duration="1000" />
             </animation>
             <text style="text">Bounce easing</text>
         </slide>
         <slide transition="scale-horiz">
             <text style="title">Scale, Horizontal</text>
             <animation src="embd://gophers.png" tw="96" th="96" pos-y="52.5">
-                <frame tx="0" ty="0" duration="2000" />
-                <frame tx="0" ty="1" duration="200" />
+                <frame tx="5" ty="2" duration="1000" />
+                <frame tx="6" ty="2" duration="1000" />
+                <frame tx="1" ty="3" duration="1000" />
+                <frame tx="6" ty="2" duration="1000" />
             </animation>
             <text style="text">Linear easing</text>
         </slide>
         <slide transition="scale-rotate">
             <text style="title" font-size="60">Scale, Rotate, Horizontal</text>
             <animation src="embd://gophers.png" tw="96" th="96" pos-y="52.5">
-                <frame tx="0" ty="0" duration="2000" />
+                <frame tx="0" ty="0" duration="1000" />
+                <frame tx="0" ty="1" duration="400" />
+                <frame tx="1" ty="1" duration="200" />
+                <frame tx="0" ty="2" duration="1000" />
                 <frame tx="0" ty="1" duration="200" />
+                <frame tx="0" ty="0" duration="1000" />
             </animation>
             <text style="text">Back easing</text>
         </slide>

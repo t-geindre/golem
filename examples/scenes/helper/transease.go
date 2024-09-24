@@ -34,3 +34,11 @@ func TransitionEaseBack(v float64) float64 {
 
 	return 1 + c3*math.Pow(v-1, 3) + c1*math.Pow(v-1, 2)
 }
+
+func TransitionEaseExpo(v float64) float64 {
+	if v == 0 {
+		return 0
+	}
+
+	return math.Pow(2, 10*(v-1))
+}
