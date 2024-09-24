@@ -48,10 +48,14 @@ func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions, _ im
 
 	scale := component.GetScale(e)
 	if scale != nil && bds != nil {
-		opts.GeoM.Scale(scale.Value, scale.Value)
+		v := scale.Value
+		if v < 0 {
+			v = 0
+		}
+		opts.GeoM.Scale(v, v)
 		opts.GeoM.Translate(
-			float64(bds.Dx())*scale.OriginX*(1-scale.Value),
-			float64(bds.Dy())*scale.OriginX*(1-scale.Value),
+			float64(bds.Dx())*scale.OriginX*(1-v),
+			float64(bds.Dy())*scale.OriginX*(1-v),
 		)
 	}
 

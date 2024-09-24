@@ -27,7 +27,7 @@ func NewScene(l golem.LayerID, name string) *Scene {
 		Opacity:    component.NewOpacity(1),
 		Scale:      component.NewScale(1, .5, .5),
 		Boundaries: component.NewBoundaries(0, 0, mw, mh),
-		Position:   component.NewPosition(.5, .5, .5, .5),
+		Position:   component.NewPosition(0, 0, 0, 0),
 	}
 
 	return s

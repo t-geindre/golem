@@ -19,12 +19,14 @@ type Scene struct {
 	current, next golem.Entity
 	transitioning bool
 	once          sync.Once
+	lastSwitch    time.Time
 	*golemutils.Panel
 }
 
 func NewScene(l golem.LayerID, scenes ...golem.Entity) *Scene {
 	s := &Scene{
-		scenes: scenes,
+		scenes:        scenes,
+		transitioning: true, // Disable controls by default
 	}
 
 	s.Panel = golemutils.NewPanel(l, s.getPanelInfos, golemutils.RefreshOnce)
@@ -46,7 +48,7 @@ func (s *Scene) Update(e golem.Entity, w golem.World) {
 			tr.Transitioning = false
 			if isCurrent {
 				s.removeScene(e, w)
-				s.transStart(s.next)
+				s.transStart(s.next, -tr.Direction)
 				s.addScene(s.next, w)
 				s.current = nil
 			}
@@ -59,7 +61,7 @@ func (s *Scene) Update(e golem.Entity, w golem.World) {
 		if isCurrent {
 			v = 1 - v
 		}
-		tr.Apply(e, v)
+		tr.Apply(e, tr.Ease(v, tr.Direction), tr.Direction)
 	}
 }
 
@@ -75,12 +77,15 @@ func (s *Scene) UpdateOnce(w golem.World) {
 	}
 
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) ||
-		inpututil.IsKeyJustPressed(ebiten.KeyRight) {
+		ebiten.IsKeyPressed(ebiten.KeyRight) ||
+		ebiten.IsKeyPressed(ebiten.KeyDown) ||
+		inpututil.IsKeyJustPressed(ebiten.KeySpace) {
 		s.nextScene(w, 1)
 	}
 
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonRight) ||
-		inpututil.IsKeyJustPressed(ebiten.KeyLeft) {
+		ebiten.IsKeyPressed(ebiten.KeyLeft) ||
+		ebiten.IsKeyPressed(ebiten.KeyUp) {
 		s.nextScene(w, -1)
 	}
 }
@@ -101,6 +106,12 @@ func (s *Scene) nextScene(w golem.World, dir int) {
 		return
 	}
 
+	// Prevent too fast switch
+	if !s.lastSwitch.IsZero() && time.Since(s.lastSwitch) < 200*time.Millisecond {
+		return
+	}
+	s.lastSwitch = time.Now()
+
 	s.idx += dir
 	if s.idx < 0 {
 		s.idx = len(s.scenes) - 1
@@ -116,19 +127,20 @@ func (s *Scene) nextScene(w golem.World, dir int) {
 	s.next = s.scenes[s.idx]
 
 	if s.current != nil {
-		s.transStart(s.current)
+		s.transStart(s.current, float64(dir))
 		return
 	}
 
-	s.transStart(s.next)
+	s.transStart(s.next, float64(-dir))
 	s.addScene(s.next, w)
 }
 
-func (s *Scene) transStart(e golem.Entity) {
+func (s *Scene) transStart(e golem.Entity, d float64) {
 	t := component.GetTransition(e)
 	if t != nil && !t.Transitioning {
 		t.Start = time.Now()
 		t.Transitioning = true
+		t.Direction = d
 		return
 	}
 

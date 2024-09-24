@@ -12,11 +12,13 @@ import (
 
 type Transition struct {
 	Func     component.TransitionFunc
+	Ease     component.TransitionEaseFunc
 	Duration time.Duration
 }
 
 type TransitionLoader struct {
 	TransMap    map[string]component.TransitionFunc
+	EaseMap     map[string]component.TransitionEaseFunc
 	Transitions map[string]Transition
 	Default     string
 }
@@ -24,9 +26,18 @@ type TransitionLoader struct {
 func NewTransitionLoader() *TransitionLoader {
 	return &TransitionLoader{
 		TransMap: map[string]component.TransitionFunc{
-			"none":  TransitionNone,
-			"fade":  TransitionFade,
-			"scale": TransitionScale,
+			"none":       TransitionNone,
+			"fade":       TransitionFade,
+			"scale":      TransitionScale,
+			"horizontal": TransitionHorizontal,
+			"vertical":   TransitionVertical,
+		},
+		EaseMap: map[string]component.TransitionEaseFunc{
+			"linear": TransitionEaseLinear,
+			"sin":    TransitionEaseSin,
+			"quad":   TransitionEaseQuad,
+			"cubic":  TransitionEaseCubic,
+			"bounce": TransitionEaseBounce,
 		},
 		Transitions: make(map[string]Transition),
 	}
@@ -78,8 +89,18 @@ func (tl *TransitionLoader) LoadXML(node *Node) error {
 			}
 		}
 
+		easeAttr := tNode.GetAttr("ease")
+		if easeAttr == "" {
+			easeAttr = "linear"
+		}
+		transEase, ok := tl.EaseMap[easeAttr]
+		if !ok {
+			return fmt.Errorf("Unknow easing function \"%s\"", easeAttr)
+		}
+
 		tl.Transitions[name] = Transition{
 			Func:     trans,
+			Ease:     transEase,
 			Duration: time.Duration(duration) * time.Millisecond,
 		}
 
@@ -103,35 +124,17 @@ func (tl *TransitionLoader) ApplyTransition(scene *entity.Scene, name string) er
 	}
 
 	if t, ok := tl.Transitions[name]; ok {
-		scene.Transition = component.NewTransition(t.Func, t.Duration)
+		scene.Transition = component.NewTransition(t.Func, t.Ease, t.Duration)
 		return nil
 	}
 
 	return fmt.Errorf("unknown transition name: \"%s\"", name)
 }
 
-func TransitionFade(entity golem.Entity, v float64) {
-	op := component.GetOpacity(entity)
-	if op != nil {
-		op.Value = float32(v)
-	}
-}
-
-func TransitionScale(entity golem.Entity, v float64) {
-	scale := component.GetScale(entity)
-	if scale != nil {
-		scale.Value = v
-	}
-}
-
 func TransitionMulti(ts []component.TransitionFunc) component.TransitionFunc {
-	return func(e golem.Entity, v float64) {
+	return func(e golem.Entity, v, d float64) {
 		for _, t := range ts {
-			t(e, v)
+			t(e, v, d)
 		}
 	}
-}
-
-func TransitionNone(_ golem.Entity, _ float64) {
-	// Do nothing
 }
