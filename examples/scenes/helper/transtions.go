@@ -18,6 +18,7 @@ type Transition struct {
 type TransitionLoader struct {
 	TransMap    map[string]component.TransitionFunc
 	Transitions map[string]Transition
+	Default     string
 }
 
 func NewTransitionLoader() *TransitionLoader {
@@ -81,19 +82,29 @@ func (tl *TransitionLoader) LoadXML(node *Node) error {
 			Func:     trans,
 			Duration: time.Duration(duration) * time.Millisecond,
 		}
+
+		if tNode.GetAttr("default") == "true" {
+			if tl.Default != "" {
+				return fmt.Errorf("only one transition can be default")
+			}
+			tl.Default = name
+		}
 	}
 
 	return nil
 }
 
 func (tl *TransitionLoader) ApplyTransition(scene *entity.Scene, name string) error {
+	if len(name) == 0 {
+		if tl.Default == "" {
+			return fmt.Errorf("missing slide transition and no default transition defined")
+		}
+		name = tl.Default
+	}
+
 	if t, ok := tl.Transitions[name]; ok {
 		scene.Transition = component.NewTransition(t.Func, t.Duration)
 		return nil
-	}
-
-	if len(name) == 0 {
-		return fmt.Errorf("missing transition name")
 	}
 
 	return fmt.Errorf("unknown transition name: \"%s\"", name)

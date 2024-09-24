@@ -114,7 +114,12 @@ func (sl *SlideLoader) LoadXMLSlides(node *Node) error {
 			return fmt.Errorf("invalid node node: \"%s\", \"slide\" expected", sNode.GetName())
 		}
 
-		slide := entity.NewScene(sl.layer, sNode.GetAttr("name"))
+		sName := sNode.GetAttr("name")
+		if sName == "" {
+			sName = fmt.Sprintf("slide-%d", len(sl.slides))
+		}
+
+		slide := entity.NewScene(sl.layer, sName)
 		err := sl.transLoader.ApplyTransition(slide, sNode.GetAttr("transition"))
 		if err != nil {
 			return err
