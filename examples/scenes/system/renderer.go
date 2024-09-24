@@ -4,12 +4,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/pkg/golem"
+	"image"
 	"math"
-)
-
-const (
-	ScaleRefWidth  = 300.0
-	ScaleRefHeight = ScaleRefWidth * 16 / 9
 )
 
 type Renderer struct {
@@ -55,6 +51,17 @@ func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions) {
 	}
 
 	bds := component.GetBoundaries(e)
+	if bds != nil && bds.StickScreen {
+		bds.Rectangle = image.Rect(0, 0, int(r.ww), int(r.wh))
+	}
+
+	rot := component.GetRotation(e)
+	if rot != nil && bds != nil && rot.Angle != 0 {
+		opts.GeoM.Translate(-float64(bds.Dx())/2, -float64(bds.Dy())/2)
+		opts.GeoM.Rotate(rot.Angle)
+		opts.GeoM.Translate(float64(bds.Dx())/2, float64(bds.Dy())/2)
+		opts.Filter = ebiten.FilterLinear // Improve rendering quality
+	}
 
 	op := component.GetOpacity(e)
 	if op != nil {

@@ -9,10 +9,11 @@
         <transition name="scale" ease="cubic" type="scale" duration="150"/>
         <transition name="vertical" ease="bounce" type="vertical" duration="150"/>
         <transition name="scale-horiz" ease="linear" type="scale, horizontal" duration="150"/>
+        <transition name="scale-rotate" ease="cubic" type="horizontal, rotate, scale, fade" duration="400"/>
     </transitions>
     <slides>
         <slide>
-            <text style="title" font-size="60">Horizontal transition, default</text>
+            <text style="title">Horizontal</text>
             <animation src="embd://gophers.png" tw="96" th="96" pos-y="52.5">
                 <frame tx="0" ty="0" duration="2000" />
                 <frame tx="0" ty="1" duration="200" />
@@ -20,7 +21,7 @@
             <text style="text">Sin easing</text>
         </slide>
         <slide transition="fade">
-            <text style="title">Fade transition</text>
+            <text style="title">Fade</text>
             <animation src="embd://gophers.png" tw="96" th="96" pos-y="52.5">
                 <frame tx="0" ty="0" duration="2000" />
                 <frame tx="0" ty="1" duration="200" />
@@ -28,7 +29,7 @@
             <text style="text">Quadratic easing</text>
         </slide>
         <slide transition="scale">
-            <text style="title">Scale transition</text>
+            <text style="title">Scale</text>
             <animation src="embd://gophers.png" tw="96" th="96" pos-y="52.5">
                 <frame tx="0" ty="0" duration="2000" />
                 <frame tx="0" ty="1" duration="200" />
@@ -36,7 +37,7 @@
             <text style="text">Cubic easing</text>
         </slide>
         <slide transition="vertical">
-            <text style="title">Vertical transition</text>
+            <text style="title">Vertical</text>
             <animation src="embd://gophers.png" tw="96" th="96" pos-y="52.5">
                 <frame tx="0" ty="0" duration="2000" />
                 <frame tx="0" ty="1" duration="200" />
@@ -44,13 +45,20 @@
             <text style="text">Bounce easing</text>
         </slide>
         <slide transition="scale-horiz">
-            <text style="title" font-size="60">Scale/horizontal combination</text>
+            <text style="title">Scale, Horizontal</text>
             <animation src="embd://gophers.png" tw="96" th="96" pos-y="52.5">
                 <frame tx="0" ty="0" duration="2000" />
                 <frame tx="0" ty="1" duration="200" />
             </animation>
             <text style="text">Linear easing</text>
         </slide>
-
+        <slide transition="scale-rotate">
+            <text style="title" font-size="60">Scale, Rotate, Horizontal</text>
+            <animation src="embd://gophers.png" tw="96" th="96" pos-y="52.5">
+                <frame tx="0" ty="0" duration="2000" />
+                <frame tx="0" ty="1" duration="200" />
+            </animation>
+            <text style="text">Cubic easing</text>
+        </slide>
     </slides>
 </slideshow>

@@ -3,6 +3,7 @@ package helper
 import (
 	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/pkg/golem"
+	"math"
 )
 
 func TransitionFade(entity golem.Entity, v, _ float64) {
@@ -38,6 +39,14 @@ func TransitionVertical(entity golem.Entity, v, d float64) {
 		} else {
 			pos.RelY = 1 - v
 		}
+	}
+}
+
+func TransitionRotate(entity golem.Entity, v, d float64) {
+	const Deg360ToRad = 360 * math.Pi / 180
+	rot := component.GetRotation(entity)
+	if rot != nil {
+		rot.Angle = d * v * Deg360ToRad
 	}
 }
 

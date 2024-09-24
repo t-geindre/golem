@@ -31,6 +31,7 @@ func NewTransitionLoader() *TransitionLoader {
 			"scale":      TransitionScale,
 			"horizontal": TransitionHorizontal,
 			"vertical":   TransitionVertical,
+			"rotate":     TransitionRotate,
 		},
 		EaseMap: map[string]component.TransitionEaseFunc{
 			"linear": TransitionEaseLinear,

@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/pkg/golem"
 )
@@ -16,18 +15,19 @@ type Scene struct {
 	*component.Lifecycle
 	*component.Boundaries
 	*component.Position
+	*component.Rotation
 }
 
 func NewScene(l golem.LayerID, name string) *Scene {
-	mw, mh := ebiten.Monitor().Size()
 	s := &Scene{
 		Entity:     golem.NewEntity(l),
 		World:      golem.NewWorld(),
 		Scene:      component.NewScene(name),
 		Opacity:    component.NewOpacity(1),
 		Scale:      component.NewScale(1, .5, .5),
-		Boundaries: component.NewBoundaries(0, 0, mw, mh),
+		Boundaries: component.NewBoundariesStickScreen(),
 		Position:   component.NewPosition(0, 0, 0, 0),
+		Rotation:   component.NewRotation(0),
 	}
 
 	return s
