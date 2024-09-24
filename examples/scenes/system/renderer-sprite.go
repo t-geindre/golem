@@ -24,7 +24,7 @@ func (r *SpriteRenderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.Worl
 		return
 	}
 
-	opts := r.getDrawOpts(e, w, spr.Img.Bounds())
+	opts := r.getDrawOpts(e, w)
 
 	screen.DrawImage(spr.Img, opts)
 }

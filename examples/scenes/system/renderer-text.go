@@ -30,7 +30,7 @@ func (r *TextRenderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.World)
 	r.computeBounds(txt, bds)
 
 	opts := &text.DrawOptions{
-		DrawImageOptions: *r.getDrawOpts(e, w, txt.Bounds),
+		DrawImageOptions: *r.getDrawOpts(e, w),
 		LayoutOptions: text.LayoutOptions{
 			LineSpacing: txt.LineHeight,
 		},

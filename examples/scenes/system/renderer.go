@@ -4,7 +4,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/t-geindre/golem/examples/scenes/component"
 	"github.com/t-geindre/golem/pkg/golem"
-	"image"
 )
 
 type Renderer struct {
@@ -24,17 +23,16 @@ func (r *Renderer) UpdateOnce(w golem.World) {
 func (r *Renderer) getDrawOpts(
 	e golem.Entity,
 	w golem.World,
-	bds image.Rectangle,
 ) *ebiten.DrawImageOptions {
 	opts := &ebiten.DrawImageOptions{}
 
-	r.applyOpts(e, opts, bds)
-	r.applyOpts(w.GetParentEntity(), opts, bds)
+	r.applyOpts(e, opts)
+	r.applyOpts(w.GetParentEntity(), opts)
 
 	return opts
 }
 
-func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions, _ image.Rectangle) {
+func (r *Renderer) applyOpts(e golem.Entity, opts *ebiten.DrawImageOptions) {
 	if e == nil {
 		return
 	}
