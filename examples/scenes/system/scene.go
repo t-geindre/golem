@@ -48,7 +48,7 @@ func (s *Scene) Update(e golem.Entity, w golem.World) {
 			tr.Transitioning = false
 			if isCurrent {
 				s.removeScene(e, w)
-				s.transStart(s.next, -tr.Direction, -tr.InOut)
+				s.transStart(s.next, -tr.Direction)
 				s.addScene(s.next, w)
 				s.current = nil
 			}
@@ -61,7 +61,7 @@ func (s *Scene) Update(e golem.Entity, w golem.World) {
 		if isCurrent {
 			v = 1 - v
 		}
-		tr.Apply(e, tr.Ease(v, tr.InOut), tr.Direction)
+		tr.Apply(e, tr.Ease(v), tr.Direction)
 	}
 }
 
@@ -126,16 +126,20 @@ func (s *Scene) nextScene(w golem.World, dir int) {
 
 	s.next = s.scenes[s.idx]
 
+	if dir == 0 {
+		dir = 1
+	}
+
 	if s.current != nil {
-		s.transStart(s.current, float64(dir), component.TransitionOut)
+		s.transStart(s.current, float64(dir))
 		return
 	}
 
-	s.transStart(s.next, float64(-dir), component.TransitionIn)
+	s.transStart(s.next, float64(-dir))
 	s.addScene(s.next, w)
 }
 
-func (s *Scene) transStart(e golem.Entity, d, io float64) {
+func (s *Scene) transStart(e golem.Entity, d float64) {
 	t := component.GetTransition(e)
 	if t != nil && !t.Transitioning {
 		t.Start = time.Now()

@@ -4,12 +4,12 @@
         <style name="text" pos-y="70" font-size="50" color="#4990f9"/>
     </styles>
     <transitions>
-        <transition name="horizontal" ease="sin" type="horizontal" duration="150" default="true"/>
-        <transition name="fade" ease="quad" type="fade" duration="150"/>
-        <transition name="scale" ease="cubic" type="scale" duration="150"/>
-        <transition name="vertical" ease="bounce" type="vertical" duration="150"/>
-        <transition name="scale-horiz" ease="linear" type="scale, horizontal" duration="150"/>
-        <transition name="scale-rotate" ease="cubic" type="horizontal, rotate, scale, fade" duration="400"/>
+        <transition name="horizontal" ease="sin" type="horizontal" duration="300" default="true"/>
+        <transition name="fade" ease="quad" type="fade" duration="300"/>
+        <transition name="scale" ease="cubic" type="scale" duration="300"/>
+        <transition name="vertical" ease="bounce" type="vertical" duration="300"/>
+        <transition name="scale-horiz" ease="linear" type="scale, horizontal" duration="300"/>
+        <transition name="scale-rotate" ease="back" type="horizontal, rotate, scale, fade" duration="600"/>
     </transitions>
     <slides>
         <slide>
@@ -58,7 +58,7 @@
                 <frame tx="0" ty="0" duration="2000" />
                 <frame tx="0" ty="1" duration="200" />
             </animation>
-            <text style="text">Cubic easing</text>
+            <text style="text">Back easing</text>
         </slide>
     </slides>
 </slideshow>

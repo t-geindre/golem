@@ -43,7 +43,7 @@ func TransitionVertical(entity golem.Entity, v, d float64) {
 }
 
 func TransitionRotate(entity golem.Entity, v, d float64) {
-	const Deg360ToRad = 360 * math.Pi / 180
+	const Deg360ToRad = 360.0 * math.Pi / 180
 	rot := component.GetRotation(entity)
 	if rot != nil {
 		rot.Angle = d * v * Deg360ToRad

@@ -39,6 +39,7 @@ func NewTransitionLoader() *TransitionLoader {
 			"quad":   TransitionEaseQuad,
 			"cubic":  TransitionEaseCubic,
 			"bounce": TransitionEaseBounce,
+			"back":   TransitionEaseBack,
 		},
 		Transitions: make(map[string]Transition),
 	}
