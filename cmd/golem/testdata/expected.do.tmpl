@@ -6,16 +6,16 @@ package mypackage
 import "github.com/t-geindre/golem/pkg/golem"
 
 type MytypeGolemI interface {
-	GetMytype() *Mytype
+	GetGolemMytype() *Mytype
 }
 
-func (p *Mytype) GetMytype() *Mytype {
+func (p *Mytype) GetGolemMytype() *Mytype {
 	return p
 }
 
 func GetMytype(e golem.Entity) *Mytype {
 	if p, ok := e.(MytypeGolemI); ok {
-		return p.GetMytype()
+		return p.GetGolemMytype()
 	}
 	return nil
 }

@@ -152,7 +152,11 @@ func (s *Scene) removeScene(e golem.Entity, w golem.World) {
 }
 
 func (s *Scene) canSwitch() bool {
-	return len(s.scenes) > 0 &&
+	if len(s.scenes) > 0 &&
 		!s.transitioning &&
-		(s.lastSwitch.IsZero() || time.Since(s.lastSwitch) > 200*time.Millisecond)
+		(s.lastSwitch.IsZero() || time.Since(s.lastSwitch) > 200*time.Millisecond) {
+		s.lastSwitch = time.Now()
+		return true
+	}
+	return false
 }

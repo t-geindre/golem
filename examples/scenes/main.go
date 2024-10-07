@@ -56,6 +56,9 @@ func main() {
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetVsyncEnabled(false)
 
+	slW, slH := loader.GetLayout()
+	ebiten.SetWindowSize(int(slW), int(slH))
+
 	g := golemutils.NewGame()
 	g.World.AddLayers(LayerBackground, LayerScenes, LayerDebug)
 

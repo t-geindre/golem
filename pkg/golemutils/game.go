@@ -6,7 +6,7 @@ import (
 )
 
 type Game struct {
-	World golem.World
+	golem.World
 }
 
 func NewGame() *Game {

@@ -5,12 +5,16 @@ type EntityID uint64
 type Entity interface {
 	GetLayer() LayerID
 	setIndex(int)
-	getIndex() int
+	index() int
+	worldAdded()
+	worldRemoved()
+	worldCount() int8
 }
 
 type entity struct {
-	layer LayerID
-	idx   int
+	layer  LayerID
+	idx    int
+	worlds int8
 }
 
 func NewEntity(l LayerID) Entity {
@@ -25,6 +29,18 @@ func (e *entity) setIndex(idx int) {
 	e.idx = idx
 }
 
-func (e *entity) getIndex() int {
+func (e *entity) index() int {
 	return e.idx
+}
+
+func (e *entity) worldAdded() {
+	e.worlds++
+}
+
+func (e *entity) worldRemoved() {
+	e.worlds--
+}
+
+func (e *entity) worldCount() int8 {
+	return e.worlds
 }
