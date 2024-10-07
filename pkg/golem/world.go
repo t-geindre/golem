@@ -2,6 +2,7 @@ package golem
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"slices"
 )
 
 type LayerID uint8
@@ -99,6 +100,12 @@ func (w *world) GetLayers() []LayerID {
 func (w *world) AddEntity(e Entity) {
 	w.delayed = append(w.delayed, func() {
 		w.AddLayers(e.GetLayer())
+
+		e.worldAdded()
+		if e.worldCount() > 1 {
+			panic("entity already added to another world")
+		}
+
 		e.setIndex(len(w.entities[e.GetLayer()]))
 		w.entities[e.GetLayer()] = append(w.entities[e.GetLayer()], e)
 		w.eCount++
@@ -115,20 +122,21 @@ func (w *world) RemoveEntity(e Entity) {
 	w.delayed = append(w.delayed, func() {
 		w.AddLayers(e.GetLayer())
 		mln := len(w.entities[e.GetLayer()]) - 1
-		idx := e.getIndex()
+		idx := e.index()
 
-		if e != w.entities[e.GetLayer()][idx] {
+		if idx < 0 || idx > mln || e != w.entities[e.GetLayer()][idx] {
 			// Entity index is not valid, either the entity has already been removed or
-			// has been added to another world
+			// has been added to another worlds
 			return
 		}
 
+		e.worldRemoved()
 		if idx != mln {
 			last := w.entities[e.GetLayer()][mln]
 			last.setIndex(idx)
 			w.entities[e.GetLayer()][idx] = last
 		}
-		w.entities[e.GetLayer()] = w.entities[e.GetLayer()][0:mln]
+		w.entities[e.GetLayer()] = slices.Delete(w.entities[e.GetLayer()], mln, mln+1)
 		w.eCount--
 	})
 }
