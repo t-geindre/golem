@@ -1,16 +1,31 @@
 name: 🪛 Tests
 on:
-  pull_request:
+  push:
 
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-latest
+    env:
+      DISPLAY: ':99.0'
+    defaults:
+      run:
+        shell: bash
     steps:
     - uses: actions/checkout@v4
+
     - name: Set up Go
-      uses: actions/setup-go@v4
+      uses: actions/setup-go@v5
       with:
         go-version: '1.22'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update -y
+        sudo apt-get install -y libasound2-dev libgl1-mesa-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev libxxf86vm-dev
+
+    - name: Xvfb
+      run: |
+        Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+
     - name: Test
       run: go test -v ./...
-
