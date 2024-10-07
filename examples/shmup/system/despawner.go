@@ -8,10 +8,16 @@ import (
 )
 
 type Despawner struct {
+	wh float64
 }
 
 func NewDespawner() *Despawner {
 	return &Despawner{}
+}
+
+func (d *Despawner) UpdateOnce(w golem.World) {
+	_, wh := ebiten.WindowSize()
+	d.wh = float64(wh)
 }
 
 func (d *Despawner) Update(e golem.Entity, w golem.World) {
@@ -42,8 +48,7 @@ func (d *Despawner) Update(e golem.Entity, w golem.World) {
 		return
 	}
 
-	_, wh := ebiten.WindowSize()
-	yMin, yMax := 0.0, float64(wh)
+	yMin, yMax := 0.0, d.wh
 
 	sp := component.GetSprite(e)
 	if sp != nil {
