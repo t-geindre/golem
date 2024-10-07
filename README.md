@@ -60,8 +60,6 @@ type Position struct {
 }
 ```
 
-All components must be public (starting with an uppercase letter)
-
 The `///go:generate golem component Position` comment  will generate a `position_golem.go` file containing the required code to retrieve components from entities.
 
 Each time a new component is created, the following command must be run:

@@ -6,16 +6,16 @@ package {package}
 import "github.com/t-geindre/golem/pkg/golem"
 
 type {type}GolemI interface {
-	Get{type}() *{type}
+	GetGolem{type}() *{type}
 }
 
-func (p *{type}) Get{type}() *{type} {
+func (p *{type}) GetGolem{type}() *{type} {
 	return p
 }
 
 func Get{type}(e golem.Entity) *{type} {
 	if p, ok := e.({type}GolemI); ok {
-		return p.Get{type}()
+		return p.GetGolem{type}()
 	}
 	return nil
 }
