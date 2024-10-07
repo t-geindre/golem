@@ -2,84 +2,72 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/t-geindre/golem/examples/scenes/component"
-	"github.com/t-geindre/golem/examples/scenes/entity"
 	"github.com/t-geindre/golem/examples/scenes/helper"
 	"github.com/t-geindre/golem/examples/scenes/system"
 	"github.com/t-geindre/golem/pkg/golem"
 	"github.com/t-geindre/golem/pkg/golemutils"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 )
 
+const (
+	LayerBackground golem.LayerID = iota
+	LayerScenes
+	LayerDebug
+)
+
 func main() {
-	const (
-		LayerAll = iota
-		LayerDebug
-	)
+	filePath := "embd://slides.xml"
+	if len(os.Args) > 1 {
+		filePath = os.Args[1]
+	}
+
+	if helper.FileExists("slides.xml") {
+		filePath = "slides.xml"
+	}
+
+	file, err := helper.OpenFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+
+	err = os.Chdir(filepath.Dir(
+		strings.Replace(filePath, "embd://", "", 1),
+	))
+	if err != nil {
+		panic(err)
+	}
+
+	xml, err := helper.ParseXML(file)
+	_ = file.Close()
+	if err != nil {
+		panic(err)
+	}
+
+	loader := helper.NewSlideLoader(LayerScenes)
+	err = loader.LoadXML(xml)
+	if err != nil {
+		panic(err)
+	}
 
 	ebiten.SetWindowTitle("Golem example - Scenes")
-	ebiten.SetWindowSize(400, 400)
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
 	ebiten.SetVsyncEnabled(false)
 
+	slW, slH := loader.GetLayout()
+	ebiten.SetWindowSize(int(slW), int(slH))
+
 	g := golemutils.NewGame()
-	g.World.AddLayers(LayerAll, LayerDebug)
+	g.World.AddLayers(LayerBackground, LayerScenes, LayerDebug)
 
-	scenes := make([]golem.Entity, 0)
-	for _, scene := range []struct {
-		name     string
-		frames   []component.Frame
-		trans    func(entity golem.Entity, v float64)
-		duration time.Duration
-	}{
-		{
-			"Fade transition",
-			[]component.Frame{
-				component.NewFrame(helper.Assets[0], time.Second*3),
-				component.NewFrame(helper.Assets[1], time.Millisecond*200),
-			},
-			helper.TransitionFade,
-			time.Millisecond * 500,
-		},
-		{
-			"Scale transition",
-			[]component.Frame{
-				component.NewFrame(helper.Assets[15], time.Second*3),
-				component.NewFrame(helper.Assets[20], time.Second*3),
-				component.NewFrame(helper.Assets[1], time.Millisecond*200),
-				component.NewFrame(helper.Assets[20], time.Second*3),
-				component.NewFrame(helper.Assets[1], time.Millisecond*200),
-			},
-			helper.TransitionScale,
-			time.Millisecond * 400,
-		},
-		{
-			"No transition",
-			[]component.Frame{
-				component.NewFrame(helper.Assets[22], time.Second*3),
-				component.NewFrame(helper.Assets[13], time.Second*1),
-				component.NewFrame(helper.Assets[18], time.Second*1),
-				component.NewFrame(helper.Assets[13], time.Second*1),
-			},
-			helper.TransitionNone,
-			0,
-		},
-	} {
-		se := entity.NewScene(LayerAll, scene.name, scene.trans, scene.duration)
-		se.Lifecycle.SetUp = func() {
-			se.World.AddLayers(LayerAll)
-			se.World.AddEntity(entity.NewGopher(LayerAll, scene.frames...))
-			se.AddSystem(system.NewRenderer())
-			se.AddSystem(system.NewAnimation())
-		}
-		se.Lifecycle.TearDown = func() {
-			se.World.Clear()
-		}
-		scenes = append(scenes, se)
-	}
+	g.World.AddSystems(
+		system.NewBackground(LayerBackground, loader.GetBackgroundColor()),
+		system.NewFullscreen(),
+		system.NewScene(LayerDebug, loader.GetSlides(LayerScenes)...),
+		golemutils.NewMetrics(LayerDebug, time.Millisecond*100),
+	)
 
-	g.World.AddSystem(system.NewScene(LayerDebug, scenes...))
-	g.World.AddSystem(golemutils.NewMetrics(LayerDebug, time.Millisecond*100))
-
-	ebiten.RunGame(g)
+	_ = ebiten.RunGame(g)
 }
