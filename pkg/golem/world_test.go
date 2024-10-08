@@ -185,11 +185,11 @@ type SystemTracker struct {
 	LastParent            Entity
 }
 
-func (s *SystemTracker) Update(e Entity, w World) {
+func (s *SystemTracker) Update(Entity, World, Clock) {
 	s.UC++
 }
 
-func (s *SystemTracker) UpdateOnce(w World) {
+func (s *SystemTracker) UpdateOnce(w World, _ Clock) {
 	if w.GetParentEntity() != nil {
 		s.LastParent = w.GetParentEntity()
 	}
@@ -197,11 +197,11 @@ func (s *SystemTracker) UpdateOnce(w World) {
 	s.UOC++
 }
 
-func (s *SystemTracker) Draw(e Entity, screen *ebiten.Image, w World) {
+func (s *SystemTracker) Draw(Entity, *ebiten.Image, World) {
 	s.DC++
 }
 
-func (s *SystemTracker) DrawOnce(screen *ebiten.Image, w World) {
+func (s *SystemTracker) DrawOnce(*ebiten.Image, World) {
 	s.DOC++
 }
 

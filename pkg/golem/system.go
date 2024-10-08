@@ -10,7 +10,7 @@ type Drawer interface {
 }
 
 type Updater interface {
-	Update(e Entity, w World)
+	Update(e Entity, w World, c Clock)
 }
 
 type DrawerOnce interface {
@@ -19,5 +19,5 @@ type DrawerOnce interface {
 }
 
 type UpdaterOnce interface {
-	UpdateOnce(w World)
+	UpdateOnce(w World, c Clock)
 }
