@@ -126,6 +126,8 @@ type Clock interface {
 	// Tick advances the clock by one tick.
 	// The duration of a tick is defined by ebiten.TPS().
 	Tick()
+
+	Elapsed() time.Duration
 }
 
 // system internal purpose to allow anything to be a system.
