@@ -25,6 +25,9 @@ type World interface {
 	RemoveSystem(s System)
 	Draw(screen *ebiten.Image)
 	Update()
+	Freeze()
+	Unfreeze()
+	IsFrozen() bool
 }
 
 type world struct {
@@ -39,6 +42,8 @@ type world struct {
 	updatersOnce []UpdaterOnce
 	delayed      []func()
 	nextLid      LayerID
+	frozen       bool
+	clk          Clock
 }
 
 func NewWorld() World {
@@ -62,6 +67,8 @@ func (w *world) Clear() {
 
 	w.eCount = 0
 	w.eChildCount = 0
+
+	w.clk = newClock()
 }
 
 func (w *world) AddLayers(layers ...LayerID) LayerID {
@@ -251,10 +258,16 @@ func (w *world) Draw(screen *ebiten.Image) {
 
 func (w *world) Update() {
 	w.Flush()
+
+	if w.frozen {
+		return
+	}
+
+	w.clk.Tick()
 	eChildCount := 0
 
 	for _, u := range w.updatersOnce {
-		u.UpdateOnce(w)
+		u.UpdateOnce(w, w.clk)
 	}
 
 	for _, layer := range w.layers {
@@ -266,10 +279,22 @@ func (w *world) Update() {
 				eChildCount += sw.Size()
 			}
 			for _, u := range w.updaters {
-				u.Update(e, w)
+				u.Update(e, w, w.clk)
 			}
 		}
 	}
 
 	w.eChildCount = eChildCount
+}
+
+func (w *world) Freeze() {
+	w.frozen = true
+}
+
+func (w *world) Unfreeze() {
+	w.frozen = false
+}
+
+func (w *world) IsFrozen() bool {
+	return w.frozen
 }
