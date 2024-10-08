@@ -28,6 +28,21 @@ func TestClockNow(t *testing.T) {
 			want: time.Time{}.Add((time.Second / time.Duration(60)) * 10),
 		},
 		{
+			name: "Now() after 60 ticks at 60 TPS",
+			args: fields{tickRate: 60, ticks: 60},
+			want: time.Time{}.Add(time.Second),
+		},
+		{
+			name: "Now() after 210 ticks at 70 TPS",
+			args: fields{tickRate: 70, ticks: 210},
+			want: time.Time{}.Add(time.Second * 3),
+		},
+		{
+			name: "Now() after 190 ticks at 60 TPS",
+			args: fields{tickRate: 60, ticks: 190},
+			want: time.Time{}.Add(time.Second*3 + (time.Second/time.Duration(60))*10),
+		},
+		{
 			name: "Now() after 1 ticks at 120 TPS",
 			args: fields{tickRate: 120, ticks: 1},
 			want: time.Time{}.Add(time.Second / time.Duration(120)),
