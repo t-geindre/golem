@@ -66,7 +66,7 @@ func NewPanel(layer golem.LayerID, refresh func(w golem.World) string, rate time
 	return p
 }
 
-func (p *Panel) UpdateOnce(w golem.World) {
+func (p *Panel) UpdateOnce(w golem.World, _ golem.Clock) {
 	if p.Rate == RefreshNever {
 		return
 	}
@@ -133,9 +133,10 @@ func (p *Panel) Refresh(w golem.World) {
 	width := float32(0)
 	height := float32(0)
 	for _, part := range strings.Split(p.Str, "\n") {
-		w := float32(font.MeasureString(p.Font, part).Round())
-		if w > width {
-			width = w
+		// todo use text api to measure string
+		wh := float32(font.MeasureString(p.Font, part).Round())
+		if wh > width {
+			width = wh
 		}
 		height += float32(m.Height.Round())
 	}
