@@ -115,6 +115,8 @@ type Entity interface {
 }
 
 // Clock measure time in a world.
+// It relies on ebiten.TPS() to define the duration of a tick.
+// If ebiten TPS is changed while a clock is running, the measured time will be wrong.
 type Clock interface {
 	// Now returns the current time in the world.
 	// Time elapsed since the world was created, or since it was cleared.
@@ -127,6 +129,8 @@ type Clock interface {
 	// The duration of a tick is defined by ebiten.TPS().
 	Tick()
 
+	// Elapsed returns the time elapsed since the last tick.
+	// This is a tick duration
 	Elapsed() time.Duration
 }
 
