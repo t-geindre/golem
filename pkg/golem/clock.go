@@ -9,6 +9,7 @@ type clock struct {
 	time    time.Time
 	timeSec time.Time
 	ticks   int
+	elapsed time.Duration
 }
 
 func newClock() Clock {
@@ -26,13 +27,20 @@ func (c *clock) Since(t time.Time) time.Duration {
 func (c *clock) Tick() {
 	c.ticks++
 
-	// Fix clock precision
+	var t time.Time
 	if c.ticks == ebiten.TPS() {
+		// Fix clock precision
 		c.timeSec = c.timeSec.Add(time.Second)
-		c.time = c.timeSec
+		t = c.timeSec
 		c.ticks = 0
-		return
+	} else {
+		t = c.time.Add(time.Second / time.Duration(ebiten.TPS()))
 	}
 
-	c.time = c.time.Add(time.Second / time.Duration(ebiten.TPS()))
+	c.elapsed = t.Sub(c.time)
+	c.time = t
+}
+
+func (c *clock) Elapsed() time.Duration {
+	return c.elapsed
 }

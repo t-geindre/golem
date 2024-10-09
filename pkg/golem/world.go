@@ -21,6 +21,7 @@ type world struct {
 	clk          Clock
 }
 
+// NewWorld creates a new empty World with its own clock.
 func NewWorld() World {
 	w := &world{}
 	w.Clear()
