@@ -16,10 +16,6 @@ func TestWorldAddRemoveEntity(t *testing.T) {
 			e := NewEntity(l)
 			w.AddEntity(e)
 
-			if e.worldCount() != 0 {
-				t.Errorf("world not flushed, entity is not expected to be in any world yet")
-			}
-
 			ens = append(ens, e)
 		}
 		if len(w.GetEntities(l)) != 0 {
@@ -28,12 +24,6 @@ func TestWorldAddRemoveEntity(t *testing.T) {
 	}
 
 	w.Flush()
-
-	for _, e := range ens {
-		if e.worldCount() != 1 {
-			t.Errorf("entity is expected to be in one world")
-		}
-	}
 
 	for _, l := range layers {
 		if len(w.GetEntities(l)) != enCount {
@@ -48,18 +38,12 @@ func TestWorldAddRemoveEntity(t *testing.T) {
 
 	for _, e := range ens {
 		w.RemoveEntity(e)
-
-		if e.worldCount() != 1 {
-			t.Errorf("world not flushed, entity is expected to be in one world")
-		}
 	}
 
 	w.Flush()
 
-	for _, e := range ens {
-		if e.worldCount() != 0 {
-			t.Errorf("entity is not expected to be in any world")
-		}
+	if w.Size() != 0 {
+		t.Errorf("world should be empty")
 	}
 
 	for _, l := range layers {
@@ -75,16 +59,12 @@ func TestWorldMultipleRemoval(t *testing.T) {
 	w.AddEntity(e)
 	w.Flush()
 
-	if e.worldCount() != 1 {
-		t.Errorf("entity is expected to be in one world")
-	}
-
 	w.RemoveEntity(e)
 	w.RemoveEntity(e)
 	w.Flush()
 
-	if e.worldCount() != 0 {
-		t.Errorf("entity is not expected to be in any world")
+	if w.Size() != 0 {
+		t.Errorf("world should be empty")
 	}
 }
 
@@ -144,7 +124,7 @@ func TestWorldSystemsRemoval(t *testing.T) {
 
 }
 
-func TestWordEmbeddedWorldUpdate(t *testing.T) {
+func TestWordEmbeddedWorldDrawUpdate(t *testing.T) {
 	en := &struct {
 		Entity
 		World
@@ -178,6 +158,22 @@ func TestWordEmbeddedWorldUpdate(t *testing.T) {
 	if subSys.LastParent != en {
 		t.Errorf("embedded world should have the parent entity")
 	}
+}
+
+func TestWorldPanicOnAddEntityAlreadyInAnotherWorld(t *testing.T) {
+	w1, w2 := NewWorld(), NewWorld()
+	e := NewEntity(0)
+	w1.AddEntity(e)
+	w1.Flush()
+
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("should panic")
+		}
+	}()
+
+	w2.AddEntity(e)
+	w2.Flush()
 }
 
 type SystemTracker struct {
