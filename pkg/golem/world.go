@@ -5,31 +5,6 @@ import (
 	"slices"
 )
 
-type LayerID uint8
-
-type World interface {
-	Clear()
-	AddLayers(layers ...LayerID) LayerID
-	RemoveLayer(layer LayerID)
-	AddEntity(e Entity)
-	AddEntities(e ...Entity)
-	RemoveEntity(e Entity)
-	GetEntities(layer LayerID) []Entity
-	SetParentEntity(e Entity)
-	GetParentEntity() Entity
-	GetLayers() []LayerID
-	Size() int
-	Flush()
-	AddSystem(s System)
-	AddSystems(s ...System)
-	RemoveSystem(s System)
-	Draw(screen *ebiten.Image)
-	Update()
-	Freeze()
-	Unfreeze()
-	IsFrozen() bool
-}
-
 type world struct {
 	layers       []LayerID
 	entities     map[LayerID][]Entity
@@ -108,8 +83,7 @@ func (w *world) AddEntity(e Entity) {
 	w.delayed = append(w.delayed, func() {
 		w.AddLayers(e.GetLayer())
 
-		e.worldAdded()
-		if e.worldCount() > 1 {
+		if e.hasWorld() {
 			panic("entity already added to another world")
 		}
 
@@ -137,7 +111,7 @@ func (w *world) RemoveEntity(e Entity) {
 			return
 		}
 
-		e.worldRemoved()
+		e.hasWorld()
 		if idx != mln {
 			last := w.entities[e.GetLayer()][mln]
 			last.setIndex(idx)
@@ -175,7 +149,7 @@ func (w *world) Flush() {
 	w.delayed = w.delayed[:0]
 }
 
-func (w *world) AddSystem(s System) {
+func (w *world) AddSystem(s system) {
 	if d, ok := s.(Drawer); ok {
 		w.drawers = append(w.drawers, d)
 	}
@@ -194,13 +168,13 @@ func (w *world) AddSystem(s System) {
 	}
 }
 
-func (w *world) AddSystems(s ...System) {
+func (w *world) AddSystems(s ...system) {
 	for _, sys := range s {
 		w.AddSystem(sys)
 	}
 }
 
-func (w *world) RemoveSystem(s System) {
+func (w *world) RemoveSystem(s system) {
 	if d, ok := s.(Drawer); ok {
 		for i, c := range w.drawers {
 			if c == d {

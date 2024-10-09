@@ -5,12 +5,6 @@ import (
 	"time"
 )
 
-type Clock interface {
-	Now() time.Time
-	Since(time.Time) time.Duration
-	Tick()
-}
-
 type clock struct {
 	time time.Time
 }

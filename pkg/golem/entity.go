@@ -1,22 +1,13 @@
 package golem
 
-type EntityID uint64
-
-type Entity interface {
-	GetLayer() LayerID
-	setIndex(int)
-	index() int
-	worldAdded()
-	worldRemoved()
-	worldCount() int8
-}
-
 type entity struct {
-	layer  LayerID
-	idx    int
-	worlds int8
+	layer LayerID
+	idx   int
+	world bool
 }
 
+// NewEntity creates a new Golem entity with the given layer
+// Any entity added to a world must be an Entity
 func NewEntity(l LayerID) Entity {
 	return &entity{layer: l}
 }
@@ -33,14 +24,9 @@ func (e *entity) index() int {
 	return e.idx
 }
 
-func (e *entity) worldAdded() {
-	e.worlds++
-}
+func (e *entity) hasWorld() bool {
+	ret := e.world
+	e.world = !e.world
 
-func (e *entity) worldRemoved() {
-	e.worlds--
-}
-
-func (e *entity) worldCount() int8 {
-	return e.worlds
+	return ret
 }
