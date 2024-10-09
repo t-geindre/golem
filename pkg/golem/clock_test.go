@@ -118,3 +118,43 @@ func TestClockSince(t *testing.T) {
 		})
 	}
 }
+
+func TestClockElapsed(t *testing.T) {
+	type fields struct {
+		ticks int
+		tps   int
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   time.Duration
+	}{
+		{
+			name:   "Elapsed after 1 tick at 60 TPS",
+			fields: fields{ticks: 1, tps: 60},
+			want:   time.Second / time.Duration(60),
+		},
+		{
+			name:   "Elapsed after 100 tick at 60 TPS",
+			fields: fields{ticks: 1, tps: 60},
+			want:   time.Second / time.Duration(60),
+		},
+		{
+			name:   "Elapsed after 100 tick at 120 TPS",
+			fields: fields{ticks: 100, tps: 120},
+			want:   time.Second / time.Duration(120),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ebiten.SetTPS(tt.fields.tps)
+			c := newClock()
+			for i := 0; i < tt.fields.ticks; i++ {
+				c.Tick()
+			}
+			if got := c.Elapsed(); got != tt.want {
+				t.Errorf("Elapsed() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
