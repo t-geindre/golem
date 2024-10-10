@@ -29,7 +29,7 @@ func NewSpawner(sl, dl golem.LayerID) *Spawner {
 	return s
 }
 
-func (s *Spawner) UpdateOnce(w golem.World) {
+func (s *Spawner) UpdateOnce(w golem.World, c golem.Clock) {
 	_, y := ebiten.Wheel()
 	if y != 0 {
 		if ebiten.IsKeyPressed(ebiten.KeyShift) {
@@ -74,7 +74,7 @@ func (s *Spawner) UpdateOnce(w golem.World) {
 		}
 	}
 
-	s.Panel.UpdateOnce(w)
+	s.Panel.UpdateOnce(w, c)
 }
 
 func (s *Spawner) getDisplay(w golem.World) string {
