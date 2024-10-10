@@ -13,7 +13,7 @@ func NewAnimation() *Animation {
 	return &Animation{}
 }
 
-func (a *Animation) Update(e golem.Entity, w golem.World) {
+func (a *Animation) Update(e golem.Entity, _ golem.World, _ golem.Clock) {
 	anim := component.GetAnimation(e)
 	sprite := component.GetSprite(e)
 

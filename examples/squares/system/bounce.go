@@ -14,12 +14,12 @@ func NewBounce() *Bounce {
 	return &Bounce{}
 }
 
-func (s *Bounce) UpdateOnce(w golem.World) {
+func (s *Bounce) UpdateOnce(_ golem.World, _ golem.Clock) {
 	ww, wh := ebiten.WindowSize()
 	s.bx, s.by = float64(ww), float64(wh)
 }
 
-func (s *Bounce) Update(e golem.Entity, w golem.World) {
+func (s *Bounce) Update(e golem.Entity, _ golem.World, _ golem.Clock) {
 	pos := component.GetPosition(e)
 	vel := component.GetVelocity(e)
 

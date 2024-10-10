@@ -33,7 +33,7 @@ func NewScene(l golem.LayerID, scenes ...golem.Entity) *Scene {
 	return s
 }
 
-func (s *Scene) Update(e golem.Entity, w golem.World) {
+func (s *Scene) Update(e golem.Entity, w golem.World, _ golem.Clock) {
 	tr := component.GetTransition(e)
 	s.transitioning = false
 	if tr != nil && tr.Transitioning {
@@ -63,12 +63,12 @@ func (s *Scene) Update(e golem.Entity, w golem.World) {
 	}
 }
 
-func (s *Scene) UpdateOnce(w golem.World) {
+func (s *Scene) UpdateOnce(w golem.World, c golem.Clock) {
 	s.once.Do(func() {
 		s.nextScene(w, 0)
 	})
 
-	s.Panel.UpdateOnce(w)
+	s.Panel.UpdateOnce(w, c)
 
 	if len(s.scenes) == 0 || s.transitioning {
 		return

@@ -18,7 +18,7 @@ func NewCamera() *Camera {
 	return &Camera{}
 }
 
-func (c *Camera) Update(e golem.Entity, w golem.World) {
+func (c *Camera) Update(e golem.Entity, _ golem.World, _ golem.Clock) {
 	cam := component.GetCamera(e)
 	if cam == nil {
 		return

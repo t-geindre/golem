@@ -12,7 +12,7 @@ func NewMove() *Move {
 	return &Move{}
 }
 
-func (s *Move) Update(e golem.Entity, w golem.World) {
+func (s *Move) Update(e golem.Entity, _ golem.World, _ golem.Clock) {
 	pos := component.GetPosition(e)
 	vel := component.GetVelocity(e)
 

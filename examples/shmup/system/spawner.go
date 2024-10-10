@@ -26,7 +26,7 @@ func NewSpawner(l golem.LayerID, rate time.Duration, spawns ...SpawnFunc) *Spawn
 	}
 }
 
-func (s *Spawner) UpdateOnce(w golem.World) {
+func (s *Spawner) UpdateOnce(w golem.World, _ golem.Clock) {
 	if time.Since(s.last) > s.rate {
 		s.last = time.Now()
 

@@ -26,7 +26,7 @@ func NewDebug(l golem.LayerID) *Debug {
 	return d
 }
 
-func (d *Debug) UpdateOnce(w golem.World) {
+func (d *Debug) UpdateOnce(w golem.World, c golem.Clock) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyF1) {
 		d.showHb = !d.showHb
 		d.Panel.Refresh(w)
@@ -35,7 +35,7 @@ func (d *Debug) UpdateOnce(w golem.World) {
 		d.showCs = !d.showCs
 		d.Panel.Refresh(w)
 	}
-	d.Panel.UpdateOnce(w)
+	d.Panel.UpdateOnce(w, c)
 }
 
 func (d *Debug) Draw(e golem.Entity, screen *ebiten.Image, w golem.World) {
