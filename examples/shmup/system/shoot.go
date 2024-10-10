@@ -13,7 +13,7 @@ func NewShoot() *Shoot {
 	return &Shoot{}
 }
 
-func (s *Shoot) Update(e golem.Entity, w golem.World) {
+func (s *Shoot) Update(e golem.Entity, w golem.World, _ golem.Clock) {
 	shoot := component.GetShoot(e)
 	if shoot == nil || !shoot.Shooting {
 		return

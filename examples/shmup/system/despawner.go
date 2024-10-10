@@ -14,7 +14,7 @@ func NewDespawner() *Despawner {
 	return &Despawner{}
 }
 
-func (d *Despawner) Update(e golem.Entity, w golem.World) {
+func (d *Despawner) Update(e golem.Entity, w golem.World, _ golem.Clock) {
 	life := component.GetLife(e)
 	position := component.GetPosition(e)
 

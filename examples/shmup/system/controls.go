@@ -13,7 +13,7 @@ func NewControls() *Controls {
 	return &Controls{}
 }
 
-func (c *Controls) Update(e golem.Entity, w golem.World) {
+func (c *Controls) Update(e golem.Entity, _ golem.World, _ golem.Clock) {
 	controls := component.GetControls(e)
 	if controls == nil {
 		return

@@ -24,7 +24,7 @@ func NewCollision(rules []CollisionRule) *Collision {
 	return c
 }
 
-func (c *Collision) Update(left golem.Entity, w golem.World) {
+func (c *Collision) Update(left golem.Entity, w golem.World, _ golem.Clock) {
 	rules, ok := c.rules[left.GetLayer()]
 	if !ok {
 		return
