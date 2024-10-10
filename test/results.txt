@@ -1,0 +1,19 @@
+goos: linux
+goarch: amd64
+cpu: AMD EPYC 7763 64-Core Processor                
+BenchmarkWorldUpdate/Update_simple_world_with_100K_entities-4         	    4214	    280861 ns/op
+BenchmarkWorldUpdate/Update_simple_world_with_1M_entities-4           	     423	   2812444 ns/op
+BenchmarkWorldUpdate/Update_complex_world_with_100K_entities-4        	    4270	    280451 ns/op
+BenchmarkWorldUpdate/Update_complex_world_with_1M_entities-4          	     427	   2893889 ns/op
+BenchmarkWorldUpdate/Update_dead_world_with_100K_entities-4           	    4282	    280243 ns/op
+BenchmarkWorldUpdate/Update_dead_world_with_1M_entities-4             	     427	   2819685 ns/op
+BenchmarkWorldDraw/Draw_simple_world_with_100K_entities-4             	    1345	    848955 ns/op
+BenchmarkWorldDraw/Draw_simple_world_with_1M_entities-4               	     132	   9330250 ns/op
+BenchmarkWorldDraw/Draw_complex_world_with_100K_entities-4            	     195	   6117269 ns/op
+BenchmarkWorldDraw/Draw_complex_world_with_1M_entities-4              	      19	  61992965 ns/op
+BenchmarkWorldDraw/Draw_dead_world_with_100K_entities-4               	     874	   1369178 ns/op
+BenchmarkWorldDraw/Draw_dead_world_with_1M_entities-4                 	      87	  13746046 ns/op
+BenchmarkWorldAddRemoveSingleEntity-4                                 	 4834894	       250.5 ns/op
+BenchmarkWorldAddRemoveMultipleEntities-4                             	 1470969	       811.3 ns/op
+PASS
+ok  	command-line-arguments	34.962s
