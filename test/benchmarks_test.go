@@ -26,24 +26,12 @@ func BenchmarkWorldUpdate(b *testing.B) {
 			args: args{world: mock.GetSimpleWorld(Size100K)},
 		},
 		{
-			name: "Update simple world with 1M entities",
-			args: args{world: mock.GetSimpleWorld(Size1M)},
-		},
-		{
 			name: "Update complex world with 100K entities",
 			args: args{world: mock.GetComplexWorld(Size100K)},
 		},
 		{
-			name: "Update complex world with 1M entities",
-			args: args{world: mock.GetComplexWorld(Size1M)},
-		},
-		{
 			name: "Update dead world with 100K entities",
 			args: args{world: mock.GetDeadWorld(Size100K)},
-		},
-		{
-			name: "Update dead world with 1M entities",
-			args: args{world: mock.GetDeadWorld(Size1M)},
 		},
 	}
 
@@ -69,24 +57,12 @@ func BenchmarkWorldDraw(b *testing.B) {
 			args: args{world: mock.GetSimpleWorld(Size100K)},
 		},
 		{
-			name: "Draw simple world with 1M entities",
-			args: args{world: mock.GetSimpleWorld(Size1M)},
-		},
-		{
 			name: "Draw complex world with 100K entities",
 			args: args{world: mock.GetComplexWorld(Size100K)},
 		},
 		{
-			name: "Draw complex world with 1M entities",
-			args: args{world: mock.GetComplexWorld(Size1M)},
-		},
-		{
 			name: "Draw dead world with 100K entities",
 			args: args{world: mock.GetDeadWorld(Size100K)},
-		},
-		{
-			name: "Draw dead world with 1M entities",
-			args: args{world: mock.GetDeadWorld(Size1M)},
 		},
 	}
 
@@ -113,25 +89,9 @@ func BenchmarkWorldRemoveEntities(b *testing.B) {
 	}{
 		// Use only simple world for this benchmark, all entities are on a single layer
 		{
-			name: "Remove 1 entity in simple 100K world, immediate flush",
-			args: args{
-				world:          func() golem.World { return mock.GetSimpleWorld(Size100K) },
-				enCount:        1,
-				immediateFlush: false,
-			},
-		},
-		{
 			name: "Remove 1 entity in simple 1M world, immediate flush",
 			args: args{
 				world:          func() golem.World { return mock.GetSimpleWorld(Size1M) },
-				enCount:        1,
-				immediateFlush: false,
-			},
-		},
-		{
-			name: "Remove 1 entity in simple 100K world, delayed flush",
-			args: args{
-				world:          func() golem.World { return mock.GetSimpleWorld(Size100K) },
 				enCount:        1,
 				immediateFlush: false,
 			},
@@ -145,25 +105,9 @@ func BenchmarkWorldRemoveEntities(b *testing.B) {
 			},
 		},
 		{
-			name: "Remove 10K entity in simple 100K world, immediate flush",
-			args: args{
-				world:          func() golem.World { return mock.GetSimpleWorld(Size100K) },
-				enCount:        Size10K,
-				immediateFlush: false,
-			},
-		},
-		{
 			name: "Remove 10K entity in simple 1M world, immediate flush",
 			args: args{
 				world:          func() golem.World { return mock.GetSimpleWorld(Size1M) },
-				enCount:        Size10K,
-				immediateFlush: false,
-			},
-		},
-		{
-			name: "Remove 10k entity in simple 100K world, delayed flush",
-			args: args{
-				world:          func() golem.World { return mock.GetSimpleWorld(Size100K) },
 				enCount:        Size10K,
 				immediateFlush: false,
 			},

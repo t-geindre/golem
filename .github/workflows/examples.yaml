@@ -1,6 +1,6 @@
 name: ❓ Build examples
 on:
-  push:
+  pull_request:
 
 jobs:
   build:
@@ -31,9 +31,8 @@ jobs:
           go-version: '1.23'
 
       - name: Use local library
-        run: |
-          go mod edit -replace github.com/t-geindre/golem=../../
-          go mod tidy
+        working-directory: examples/${{ matrix.examples }}
+        run: go mod edit -replace github.com/t-geindre/golem=../../
 
       - name: Tests
         working-directory: examples/${{ matrix.examples }}
