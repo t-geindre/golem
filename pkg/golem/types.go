@@ -78,10 +78,10 @@ type World interface {
 	// Calls are performed in the order of the layers
 	Draw(screen *ebiten.Image)
 
-	// Update will go through all layers
-	// Calls all UpdaterOnce systems once
-	// Calls all Updater systems for each world Entity
-	// Calls are performed in the order of the layers
+	// Update will go through all layers.
+	// Calls all UpdaterOnce systems once.
+	// Calls all Updater systems for each world Entity.
+	// Calls are performed in the order of the layers.
 	Update()
 
 	// Freeze will stop the world from updating.
