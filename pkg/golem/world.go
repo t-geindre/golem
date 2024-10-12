@@ -29,6 +29,13 @@ func NewWorld() World {
 }
 
 func (w *world) Clear() {
+	// Clear all entities world membership
+	for _, layer := range w.layers {
+		for _, e := range w.entities[layer] {
+			e.hasWorld()
+		}
+	}
+
 	w.layers = make([]LayerID, 0)
 
 	w.entities = make(map[LayerID][]Entity)
