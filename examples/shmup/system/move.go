@@ -14,6 +14,11 @@ func NewMove() *Move {
 	return &Move{}
 }
 
+func (s *Move) UpdateOnce(_ golem.World, _ golem.Clock) {
+	ww, wh := ebiten.WindowSize()
+	s.ww, s.wh = float64(ww), float64(wh)
+}
+
 func (s *Move) Update(e golem.Entity, _ golem.World, c golem.Clock) {
 	pos := component.GetPosition(e)
 	vel := component.GetVelocity(e)

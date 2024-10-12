@@ -15,6 +15,11 @@ func NewDespawner() *Despawner {
 	return &Despawner{}
 }
 
+func (d *Despawner) UpdateOnce(_ golem.World, _ golem.Clock) {
+	_, wh := ebiten.WindowSize()
+	d.wh = float64(wh)
+}
+
 func (d *Despawner) Update(e golem.Entity, w golem.World, _ golem.Clock) {
 	life := component.GetLife(e)
 	position := component.GetPosition(e)
