@@ -4,13 +4,15 @@ package component
 type Position struct {
 	// Relative position
 	RelX, RelY float64
+	// On item origin
+	OriginX, OriginY float64
 }
 
-const PositionNone = -1
-
-func NewPosition(x, y float64) *Position {
+func NewPosition(x, y, ox, oy float64) *Position {
 	return &Position{
-		RelX: x,
-		RelY: y,
+		RelX:    x,
+		RelY:    y,
+		OriginX: ox,
+		OriginY: oy,
 	}
 }
