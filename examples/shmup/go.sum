@@ -18,6 +18,8 @@ github.com/t-geindre/golem v0.0.0-20240918155742-7700e1a65d26 h1:Y5B7ikbANfgPUcN
 github.com/t-geindre/golem v0.0.0-20240918155742-7700e1a65d26/go.mod h1:7h2k5iNllYi+8cXL5y3ZN+/YBTRUvJQ/LIwdEu/WPdc=
 github.com/t-geindre/golem v0.0.0-20241011112752-9532f19b7dbd h1:0qrTf5HFQvqU8dmKyhBZYB8reOMmRbaj/azqyZTQhIU=
 github.com/t-geindre/golem v0.0.0-20241011112752-9532f19b7dbd/go.mod h1:z/zykS1uWdVlm3lX5jfNkAlFXs25A4Yy2ckb10wQ0II=
+github.com/t-geindre/golem v0.0.0-20241012145823-27c7658a5b62 h1:o+Ik7HMDaly6gEqNZiSOxgwoMhWtkFvVYPrzDDMqz3Y=
+github.com/t-geindre/golem v0.0.0-20241012145823-27c7658a5b62/go.mod h1:z/zykS1uWdVlm3lX5jfNkAlFXs25A4Yy2ckb10wQ0II=
 golang.org/x/image v0.18.0 h1:jGzIakQa/ZXI1I0Fxvaa9W7yP25TqT6cHIHn+6CqvSQ=
 golang.org/x/image v0.18.0/go.mod h1:4yyo5vMFQjVjUcVk4jEQcU9MGy/rulF5WvUILseCM2E=
 golang.org/x/sync v0.7.0 h1:YsImfSBoP9QPYL0xyKJPq0gcaJdG3rInoqxTWbfQu9M=
