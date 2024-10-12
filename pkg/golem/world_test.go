@@ -160,6 +160,36 @@ func TestWordEmbeddedWorldDrawUpdate(t *testing.T) {
 	}
 }
 
+func TestWorldClear(t *testing.T) {
+	w := NewWorld()
+	enCount := 10
+	for i := 0; i < enCount; i++ {
+		w.AddEntity(NewEntity(0))
+	}
+	w.Flush()
+
+	w.Clear()
+
+	if w.Size() != 0 {
+		t.Errorf("world should be empty")
+	}
+}
+
+func TestWorldClearAndAddAgain(t *testing.T) {
+	w := NewWorld()
+	e := NewEntity(0)
+	w.AddEntity(e)
+	w.Flush()
+
+	w.Clear()
+	w.AddEntity(e)
+	w.Flush()
+
+	if w.Size() != 1 {
+		t.Errorf("world should have one entity")
+	}
+}
+
 func TestWorldPanicOnAddEntityAlreadyInAnotherWorld(t *testing.T) {
 	w1, w2 := NewWorld(), NewWorld()
 	e := NewEntity(0)
