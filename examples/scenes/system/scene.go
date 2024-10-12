@@ -64,7 +64,7 @@ func (s *Scene) Update(e golem.Entity, w golem.World, _ golem.Clock) {
 }
 
 func (s *Scene) UpdateOnce(w golem.World, c golem.Clock) {
-	s.Panel.UpdateOnce(w)
+	s.Panel.UpdateOnce(w, c)
 
 	if s.current == nil && s.next == nil {
 		s.nextScene(w, 0)

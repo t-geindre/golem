@@ -21,7 +21,7 @@ func NewRenderer(srw, srh float64) *Renderer {
 	}
 }
 
-func (r *Renderer) UpdateOnce(w golem.World) {
+func (r *Renderer) UpdateOnce(_ golem.World, _ golem.Clock) {
 	ww, wh := ebiten.Monitor().Size()
 	if !ebiten.IsFullscreen() {
 		ww, wh = ebiten.WindowSize()

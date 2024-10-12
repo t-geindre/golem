@@ -11,11 +11,11 @@ type Fullscreen struct {
 
 func NewFullscreen() *Fullscreen {
 	f := &Fullscreen{}
-	//f.setFullscreen(true)
+	f.setFullscreen(true)
 	return f
 }
 
-func (f *Fullscreen) UpdateOnce(w golem.World) {
+func (f *Fullscreen) UpdateOnce(_ golem.World, _ golem.Clock) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) && ebiten.IsKeyPressed(ebiten.KeyAlt) {
 		f.setFullscreen(!ebiten.IsFullscreen())
 	}
