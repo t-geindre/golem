@@ -1,9 +1,11 @@
 name: ⏱ Benchmarks
 on:
   pull_request:
+    types: [opened, synchronize, labeled]
 
 jobs:
   benchmarks:
+    if: contains(github.event.pull_request.labels.*.name, 'CI/Benchmarks')
     runs-on: ubuntu-latest
     env:
       DISPLAY: ':99.0'
@@ -20,19 +22,22 @@ jobs:
         run: |
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
-      - uses: actions/checkout@v4
+      - name: Checkout ${{ github.head_ref }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.23'
 
-      - name: Setup benchstats
+      - name: Setup benchstat
         run: |
           go get golang.org/x/perf/cmd/benchstat
           go install golang.org/x/perf/cmd/benchstat
 
-      - name: Run benchmarks
+      - name: Run benchmarks on ${{ github.head_ref }}
         id: benchmarks
         run: |
           go test -run='^$' -bench=. -count=10 test/benchmarks_test.go | grep -v "XGB:" > /tmp/benchmarks.txt
@@ -40,10 +45,23 @@ jobs:
           cat /tmp/benchmarks.txt >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          ref: 'master'
+
+      - name: Run benchmarks on master
+        id: benchmarks-master
+        run: |
+          go test -run='^$' -bench=. -count=10 test/benchmarks_test.go | grep -v "XGB:" > /tmp/benchmarks-master.txt
+          echo "results<<EOF" >> "$GITHUB_OUTPUT"
+          cat /tmp/benchmarks.txt >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
       - name: Run benchmarks diff
         id: benchmarks-diff
         run: |
-          benchstat test/results.txt /tmp/benchmarks.txt > /tmp/benchmarks-diff.txt
+          benchstat /tmp/benchmarks-master.txt /tmp/benchmarks.txt > /tmp/benchmarks-diff.txt
           echo "results<<EOF" >> "$GITHUB_OUTPUT"
           cat /tmp/benchmarks-diff.txt >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
@@ -52,21 +70,35 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            ### Benchmarks
+            ## Benchmarks
+            
+            #### Benchstat `master` vs `${{ github.head_ref }}`
             
             <details>
-              <summary>Diff</summary>
+              <summary>Results</summary>
 
               ```
                 ${{ steps.benchmarks-diff.outputs.results }}
               ```
             </details>
             
+            #### Benchmarks on `${{ github.head_ref }}`
+            
             <details>
               <summary>Results</summary>
 
               ```
                 ${{ steps.benchmarks.outputs.results }}
+              ```
+            </details>
+            
+            #### Benchmarks on `master`
+            
+            <details>
+              <summary>Results</summary>
+
+              ```
+                ${{ steps.benchmarks-master.outputs.results }}
               ```
             </details>
           comment_tag: benchmarks

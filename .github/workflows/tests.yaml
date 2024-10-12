@@ -1,6 +1,12 @@
 name: ✅ Tests
 on:
   push:
+    paths:
+      - 'pkg/**'
+      - 'cmd/**'
+      - 'test/**'
+      - 'go.mod'
+      - 'go.sum'
 
 jobs:
   tests:
