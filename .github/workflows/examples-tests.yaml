@@ -1,6 +1,12 @@
-name: ❓ Build examples
+name: ✍️ Build examples
 on:
   pull_request:
+    paths:
+      - 'pkg/**'
+      - 'cmd/**' # TODO regenerate components files using latest Golem version
+      - 'examples/**'
+      - 'go.mod'
+      - 'go.sum'
 
 jobs:
   build:
@@ -33,6 +39,10 @@ jobs:
       - name: Use local library
         working-directory: examples/${{ matrix.examples }}
         run: go mod edit -replace github.com/t-geindre/golem=../../
+
+      - name: Generate components files
+        working-directory: examples/${{ matrix.examples }}
+        run: go generate ./...
 
       - name: Tests
         working-directory: examples/${{ matrix.examples }}

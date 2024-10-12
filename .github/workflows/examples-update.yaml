@@ -1,13 +1,16 @@
-name: ⏱ Update stored benchmarks
+name: 🚀 Update examples
 on:
   push:
     branches:
       - master
+    paths:
+      - 'pkg/**'
+      - 'go.mod'
+      - 'go.sum'
 
 jobs:
-  benchmarks:
+  update-examples:
     runs-on: ubuntu-latest
-
     env:
       DISPLAY: ':99.0'
     defaults:
@@ -30,12 +33,19 @@ jobs:
         with:
           go-version: '1.23'
 
-      - name: Benchmarks
-        id: benchmarks
-        run: go test -run='^$' -bench=. -count=10 test/benchmarks_test.go | grep -v "XGB:" > test/results.txt
+      - name: Update golem
+        run: |
+          cd examples/camera
+          go get github.com/t-geindre/golem@master
+          cd ../scenes
+          go get github.com/t-geindre/golem@master
+          cd ../shmup
+          go get github.com/t-geindre/golem@master
+          cd ../squares
+          go get github.com/t-geindre/golem@master
 
-      - name: Commit benchmarks results
+      - name: Commit example update
         uses: EndBug/add-and-commit@v9
         with:
-          add: 'test/results.txt'
-          message: 'Update benchmarks results'
+          add: 'examples/'
+          message: 'Update examples dependencies'
