@@ -11,7 +11,15 @@ func TestAnimation(t *testing.T) {
 }
 
 func TestRenderer(t *testing.T) {
-	golemutils.AssertImplementsDrawer("Renderer", NewRenderer(), t)
+	golemutils.AssertImplementsUpdaterOnce("Renderer", NewRenderer(0, 0), t)
+}
+
+func TestSpriteRenderer(t *testing.T) {
+	golemutils.AssertImplementsDrawer("SpriteRenderer", NewSpriteRenderer(0, 0), t)
+}
+
+func TestTextRenderer(t *testing.T) {
+	golemutils.AssertImplementsDrawer("TextRenderer", NewTextRenderer(0, 0), t)
 }
 
 func TestScene(t *testing.T) {

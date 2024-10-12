@@ -7,10 +7,16 @@ import (
 )
 
 type Move struct {
+	ww, wh float64
 }
 
 func NewMove() *Move {
 	return &Move{}
+}
+
+func (s *Move) UpdateOnce(_ golem.World, _ golem.Clock) {
+	ww, wh := ebiten.WindowSize()
+	s.ww, s.wh = float64(ww), float64(wh)
 }
 
 func (s *Move) Update(e golem.Entity, _ golem.World, c golem.Clock) {
@@ -26,8 +32,7 @@ func (s *Move) Update(e golem.Entity, _ golem.World, c golem.Clock) {
 
 	cs := component.GetConstraint(e)
 	if cs != nil {
-		ww, wh := ebiten.WindowSize()
-		maxX, maxY := float64(ww)-cs.W-cs.X, float64(wh)-cs.H-cs.Y
+		maxX, maxY := s.ww-cs.W-cs.X, s.wh-cs.H-cs.Y
 		minX, minY := -cs.X, -cs.Y
 
 		if pos.X < minX {
