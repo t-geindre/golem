@@ -70,26 +70,32 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            ### Benchmarks
+            ## Benchmarks
+            
+            #### Benchstat `master` vs `${{ github.head_ref }}`
             
             <details>
-              <summary>master VS ${{ github.head_ref }}</summary>
+              <summary>Results</summary>
 
               ```
                 ${{ steps.benchmarks-diff.outputs.results }}
               ```
             </details>
             
+            #### Benchmarks on `${{ github.head_ref }}`
+            
             <details>
-              <summary>${{ github.head_ref }}</summary>
+              <summary>Results</summary>
 
               ```
                 ${{ steps.benchmarks.outputs.results }}
               ```
             </details>
             
+            #### Benchmarks on `master`
+            
             <details>
-              <summary>master</summary>
+              <summary>Results</summary>
 
               ```
                 ${{ steps.benchmarks-master.outputs.results }}
