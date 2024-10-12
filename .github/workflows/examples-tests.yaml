@@ -40,10 +40,6 @@ jobs:
         working-directory: examples/${{ matrix.examples }}
         run: go mod edit -replace github.com/t-geindre/golem=../../
 
-      - name: Generate components files
-        working-directory: examples/${{ matrix.examples }}
-        run: go generate ./...
-
       - name: Tests
         working-directory: examples/${{ matrix.examples }}
         run: go test -v ./...
