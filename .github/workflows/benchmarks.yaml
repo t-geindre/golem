@@ -4,14 +4,19 @@ on:
     types: [opened, synchronize, labeled]
 
 jobs:
-  benchmarks:
+  benchmark:
     if: contains(github.event.pull_request.labels.*.name, 'CI/Benchmarks')
+    strategy:
+      matrix:
+        job:
+          - name: master
+            ref: master
+          - name: pr
+            ref: ${{ github.head_ref }}
+    name: Benchmark on ${{ matrix.job.ref }}
     runs-on: ubuntu-latest
     env:
       DISPLAY: ':99.0'
-    defaults:
-      run:
-        shell: bash
     steps:
       - name: Install dependencies
         run: |
@@ -22,10 +27,38 @@ jobs:
         run: |
           Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
 
-      - name: Checkout ${{ github.head_ref }}
+      - name: Checkout ${{ matrix.job.ref }}
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ matrix.job.ref }}
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Run benchmarks on ${{ matrix.job.ref }}
+        run: go test -run='^$' -bench=. -count=10 test/benchmarks_test.go | grep -v "XGB:" > /tmp/benchmarks-${{ matrix.job.name }}.txt
+
+      - name: Archive benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmarks-${{ matrix.job.name }}
+          path: /tmp/benchmarks-${{ matrix.job.name }}.txt
+
+  Benchstat:
+    runs-on: ubuntu-latest
+    needs: benchmark
+    steps:
+      - name: Download master benchmark
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmarks-master
+
+      - name: Download PR benchmark
+        uses: actions/download-artifact@v4
+        with:
+          name: benchmarks-pr
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -33,37 +66,23 @@ jobs:
           go-version: '1.23'
 
       - name: Setup benchstat
-        run: |
-          go get golang.org/x/perf/cmd/benchstat
-          go install golang.org/x/perf/cmd/benchstat
-
-      - name: Run benchmarks on ${{ github.head_ref }}
-        id: benchmarks
-        run: |
-          go test -run='^$' -bench=. -count=10 test/benchmarks_test.go | grep -v "XGB:" > /tmp/benchmarks.txt
-          echo "results<<EOF" >> "$GITHUB_OUTPUT"
-          cat /tmp/benchmarks.txt >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-
-      - name: Checkout master
-        uses: actions/checkout@v4
-        with:
-          ref: 'master'
-
-      - name: Run benchmarks on master
-        id: benchmarks-master
-        run: |
-          go test -run='^$' -bench=. -count=10 test/benchmarks_test.go | grep -v "XGB:" > /tmp/benchmarks-master.txt
-          echo "results<<EOF" >> "$GITHUB_OUTPUT"
-          cat /tmp/benchmarks.txt >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
+        run: go install golang.org/x/perf/cmd/benchstat@latest
 
       - name: Run benchmarks diff
         id: benchmarks-diff
+        run: benchstat benchmarks-master.txt benchmarks-pr.txt > benchmarks-diff.txt
+
+      - name: Prepare output
+        id: prepare-output
         run: |
-          benchstat /tmp/benchmarks-master.txt /tmp/benchmarks.txt > /tmp/benchmarks-diff.txt
-          echo "results<<EOF" >> "$GITHUB_OUTPUT"
-          cat /tmp/benchmarks-diff.txt >> "$GITHUB_OUTPUT"
+          echo "master<<EOF" >> "$GITHUB_OUTPUT"
+          cat benchmarks-master.txt >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "pr<<EOF" >> "$GITHUB_OUTPUT"
+          cat benchmarks-pr.txt >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "diff<<EOF" >> "$GITHUB_OUTPUT"
+          cat benchmarks-diff.txt >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Comment PR with benchmark results
@@ -71,34 +90,34 @@ jobs:
         with:
           message: |
             ## Benchmarks
-            
+
             #### Benchstat `master` vs `${{ github.head_ref }}`
-            
+
             <details>
               <summary>Results</summary>
 
               ```
-                ${{ steps.benchmarks-diff.outputs.results }}
+                ${{ steps.prepare-output.outputs.diff }}
               ```
             </details>
-            
+
             #### Benchmarks on `${{ github.head_ref }}`
-            
+
             <details>
               <summary>Results</summary>
 
               ```
-                ${{ steps.benchmarks.outputs.results }}
+                ${{ steps.prepare-output.outputs.pr }}
               ```
             </details>
-            
+
             #### Benchmarks on `master`
-            
+
             <details>
               <summary>Results</summary>
 
               ```
-                ${{ steps.benchmarks-master.outputs.results }}
+                ${{ steps.prepare-output.outputs.master }}
               ```
             </details>
           comment_tag: benchmarks
