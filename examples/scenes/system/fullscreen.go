@@ -11,24 +11,15 @@ type Fullscreen struct {
 
 func NewFullscreen() *Fullscreen {
 	f := &Fullscreen{}
-	f.setFullscreen(true)
+	ebiten.SetFullscreen(true)
 	return f
 }
 
 func (f *Fullscreen) UpdateOnce(_ golem.World, _ golem.Clock) {
 	if inpututil.IsKeyJustPressed(ebiten.KeyEnter) && ebiten.IsKeyPressed(ebiten.KeyAlt) {
-		f.setFullscreen(!ebiten.IsFullscreen())
+		ebiten.SetFullscreen(!ebiten.IsFullscreen())
 	}
 	if inpututil.IsKeyJustPressed(ebiten.KeyEscape) {
-		f.setFullscreen(false)
+		ebiten.SetFullscreen(false)
 	}
-}
-
-func (f *Fullscreen) setFullscreen(fs bool) {
-	ebiten.SetFullscreen(fs)
-	if fs {
-		ebiten.SetCursorMode(ebiten.CursorModeHidden)
-		return
-	}
-	ebiten.SetCursorMode(ebiten.CursorModeVisible)
 }

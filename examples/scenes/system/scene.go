@@ -91,7 +91,7 @@ func (s *Scene) getPanelInfos(w golem.World) string {
 	if s.current != nil {
 		sc := component.GetScene(s.current)
 		if s != nil {
-			return fmt.Sprintf("[%d/%d] %s\n[<]/[>] Prev/Next ", s.idx, s.size, sc.Name)
+			return fmt.Sprintf("[%d/%d] %s\n[<]/[>] Prev/Next ", s.idx+1, s.size, sc.Name)
 		}
 	}
 
