@@ -3,19 +3,9 @@
 
 package mock
 
-import "github.com/t-geindre/golem/pkg/golem"
-
-type CompAGolemI interface {
-	GetCompA() *CompA
-}
-
-func (p *CompA) GetCompA() *CompA {
-	return p
-}
-
-func GetCompA(e golem.Entity) *CompA {
-	if p, ok := e.(CompAGolemI); ok {
-		return p.GetCompA()
+func GetCompA(e any) *CompA {
+	if p, ok := e.(*CompA); ok {
+		return p
 	}
 	return nil
 }
