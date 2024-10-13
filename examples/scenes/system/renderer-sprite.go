@@ -25,6 +25,7 @@ func (r *SpriteRenderer) Draw(e golem.Entity, screen *ebiten.Image, w golem.Worl
 	}
 
 	opts := r.getDrawOpts(e, w)
+	opts.Filter = ebiten.FilterLinear
 
 	screen.DrawImage(spr.Img, opts)
 }

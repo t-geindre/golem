@@ -109,7 +109,7 @@ func (sl *SlideLoader) LoadXMLSlides(node *Node) error {
 
 		sName := sNode.GetAttr("name")
 		if sName == "" {
-			sName = fmt.Sprintf("slide-%d", len(sl.slides))
+			sName = fmt.Sprintf("slide-%d", len(sl.slides)+1)
 		}
 
 		slide := entity.NewScene(sl.layer, sName)

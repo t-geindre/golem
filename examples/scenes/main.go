@@ -54,17 +54,17 @@ func main() {
 
 	ebiten.SetWindowTitle("Golem example - Scenes")
 	ebiten.SetWindowResizingMode(ebiten.WindowResizingModeEnabled)
-	ebiten.SetVsyncEnabled(false)
 
 	slW, slH := loader.GetLayout()
 	ebiten.SetWindowSize(int(slW), int(slH))
 
 	g := golemutils.NewGame()
-	g.World.AddLayers(LayerBackground, LayerScenes, LayerDebug)
+	g.AddLayers(LayerBackground, LayerScenes, LayerDebug)
 
-	g.World.AddSystems(
+	g.AddSystems(
 		system.NewBackground(LayerBackground, loader.GetBackgroundColor()),
 		system.NewFullscreen(),
+		system.NewMouse(),
 		system.NewScene(LayerDebug, loader.GetSlides(LayerScenes)...),
 		golemutils.NewMetrics(LayerDebug, time.Millisecond*100),
 	)
