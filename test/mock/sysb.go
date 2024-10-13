@@ -12,7 +12,7 @@ func NewSysB() *SysB {
 	return &SysB{}
 }
 
-func (s *SysB) Update(e golem.Entity, _ golem.World) {
+func (s *SysB) Update(e golem.Entity, _ golem.World, _ golem.Clock) {
 	s.update(e)
 }
 
