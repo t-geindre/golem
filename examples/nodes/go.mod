@@ -4,7 +4,7 @@ go 1.23.1
 
 require (
 	github.com/hajimehoshi/ebiten/v2 v2.7.8
-	github.com/t-geindre/golem v0.0.0-20241013093716-b09d869e6333
+	github.com/t-geindre/golem v0.0.0-20241013145426-0e9a49b61499
 )
 
 require (
