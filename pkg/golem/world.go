@@ -6,19 +6,20 @@ import (
 )
 
 type world struct {
-	layers       []LayerID
-	entities     map[LayerID][]Entity
-	parent       Entity
-	eCount       int
-	eChildCount  int
-	drawers      []Drawer
-	drawersOnce  map[LayerID][]DrawerOnce
-	updaters     []Updater
-	updatersOnce []UpdaterOnce
-	delayed      []func()
-	nextLid      LayerID
-	frozen       bool
-	clk          Clock
+	layers          []LayerID
+	entities        map[LayerID][]Entity
+	parent          Entity
+	eCount          int
+	eChildCount     int
+	drawers         []Drawer
+	drawersOnce     map[LayerID][]DrawerOnce
+	updaters        []Updater
+	updatersOnce    []UpdaterOnce
+	delayed         []func()
+	nextLid         LayerID
+	frozen          bool
+	clk             Clock
+	parentSharedSys bool
 }
 
 // NewWorld creates a new empty World with its own clock.
@@ -26,6 +27,14 @@ func NewWorld() World {
 	w := &world{}
 	w.Clear()
 	return w
+}
+
+func (w *world) SetParentSharedSystems(b bool) {
+	w.parentSharedSys = b
+}
+
+func (w *world) GetParentSharedSystems() bool {
+	return w.parentSharedSys
 }
 
 func (w *world) Clear() {
@@ -221,24 +230,36 @@ func (w *world) RemoveSystem(s system) {
 }
 
 func (w *world) Draw(screen *ebiten.Image) {
+	w.DrawWithSystems(screen, w.drawers, w.drawersOnce)
+}
+
+func (w *world) DrawWithSystems(screen *ebiten.Image, drawers []Drawer, drawersOnce map[LayerID][]DrawerOnce) {
 	for _, layer := range w.layers {
-		for _, d := range w.drawersOnce[layer] {
+		for _, d := range drawersOnce[layer] {
 			d.DrawOnce(screen, w)
 		}
 		for _, e := range w.entities[layer] {
+			for _, d := range drawers {
+				d.Draw(e, screen, w)
+			}
 			if sw, ok := e.(World); ok {
 				sw.SetParentEntity(e)
-				sw.Draw(screen)
+				if sw.GetParentSharedSystems() {
+					sw.DrawWithSystems(screen, drawers, drawersOnce)
+				} else {
+					sw.Draw(screen)
+				}
 				sw.SetParentEntity(nil)
-			}
-			for _, d := range w.drawers {
-				d.Draw(e, screen, w)
 			}
 		}
 	}
 }
 
 func (w *world) Update() {
+	w.UpdateWithSystems(w.updaters, w.updatersOnce)
+}
+
+func (w *world) UpdateWithSystems(updaters []Updater, updatersOnce []UpdaterOnce) {
 	w.Flush()
 
 	if w.frozen {
@@ -248,20 +269,24 @@ func (w *world) Update() {
 	w.clk.Tick()
 	eChildCount := 0
 
-	for _, u := range w.updatersOnce {
+	for _, u := range updatersOnce {
 		u.UpdateOnce(w, w.clk)
 	}
 
 	for _, layer := range w.layers {
 		for _, e := range w.entities[layer] {
+			for _, u := range updaters {
+				u.Update(e, w, w.clk)
+			}
 			if sw, ok := e.(World); ok {
 				sw.SetParentEntity(e)
-				sw.Update()
+				if sw.GetParentSharedSystems() {
+					sw.UpdateWithSystems(updaters, updatersOnce)
+				} else {
+					sw.Update()
+				}
 				sw.SetParentEntity(nil)
 				eChildCount += sw.Size()
-			}
-			for _, u := range w.updaters {
-				u.Update(e, w, w.clk)
 			}
 		}
 	}

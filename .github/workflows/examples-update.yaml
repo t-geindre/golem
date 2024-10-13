@@ -37,6 +37,8 @@ jobs:
         run: |
           cd examples/camera
           go get github.com/t-geindre/golem@master
+          cd ../nodes
+          go get github.com/t-geindre/golem@master
           cd ../scenes
           go get github.com/t-geindre/golem@master
           cd ../shmup

@@ -206,6 +206,72 @@ func TestWorldPanicOnAddEntityAlreadyInAnotherWorld(t *testing.T) {
 	w2.Flush()
 }
 
+func TestWorldSize(t *testing.T) {
+	w := NewWorld()
+	newEnt := func() struct {
+		Entity
+		World
+	} {
+		return struct {
+			Entity
+			World
+		}{NewEntity(0), NewWorld()}
+	}
+	for i := 0; i < 10; i++ {
+		w.AddEntity(newEnt())
+	}
+	w.Flush()
+
+	if w.Size() != 10 {
+		t.Errorf("size()=%d, expected 10", w.Size())
+	}
+
+	e := newEnt()
+	for i := 0; i < 10; i++ {
+		e.AddEntity(newEnt())
+	}
+	w.AddEntity(e)
+	w.Flush()
+	w.Update()
+
+	if w.Size() != 21 {
+		t.Errorf("size()=%d, expected 21", w.Size())
+	}
+}
+
+func TestWorldParentSystemsAreAppliedOnChildren(t *testing.T) {
+	newEnt := func() struct {
+		Entity
+		World
+	} {
+		return struct {
+			Entity
+			World
+		}{NewEntity(0), NewWorld()}
+	}
+
+	w := NewWorld()
+	e := newEnt()
+	e.SetParentSharedSystems(true)
+	w.AddEntity(e)
+	w.Flush()
+
+	subE := newEnt()
+	subE.SetParentSharedSystems(true)
+	e.AddEntity(subE)
+	e.Flush()
+
+	sys := &SystemTracker{}
+	w.AddSystem(sys)
+
+	w.Update()
+	w.Draw(&ebiten.Image{})
+
+	if sys.UC != 2 || sys.DC != 2 {
+		t.Errorf("systems should be applied on children")
+	}
+}
+
 type SystemTracker struct {
 	UC, UOC, DC, DOC, GLC int
 	LastParent            Entity
