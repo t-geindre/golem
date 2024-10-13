@@ -12,7 +12,7 @@ jobs:
   build:
     strategy:
       matrix:
-        examples: [camera, scenes, shmup, squares]
+        examples: [camera, nodes, scenes, shmup, squares]
     runs-on: ubuntu-latest
     env:
       DISPLAY: ':99.0'

@@ -13,6 +13,18 @@ Demonstrate a simple camera system with:
 $ go run github.com/t-geindre/golem/examples/camera@latest
 ```
 
+## [Nodes](nodes)
+
+Demonstrate how a nodal system can be implemented with Golem.
+Each entity is a node that can have children nodes. 
+Geometry and transformations are inherited from parent nodes.
+
+### Run
+
+```bash
+$ go run github.com/t-geindre/golem/examples/node@latest
+```
+
 ## [Scenes](scenes)
 
 Demonstrate a scene management system with transitions and lifecycle.

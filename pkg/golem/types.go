@@ -47,6 +47,13 @@ type World interface {
 	// This is used when the world is a child of another entity.
 	SetParentEntity(e Entity)
 
+	// SetParentSharedSystems make the world share its systems with its parent world.
+	// Any system contained in the current world will be ignored.
+	SetParentSharedSystems(b bool)
+
+	// GetParentSharedSystems returns true if the world shares its systems with its parent world.
+	GetParentSharedSystems() bool
+
 	// GetParentEntity returns the parent entity of the world.
 	// This is used when the world is a child of another entity.
 	GetParentEntity() Entity
@@ -78,11 +85,17 @@ type World interface {
 	// Calls are performed in the order of the layers
 	Draw(screen *ebiten.Image)
 
+	// DrawWithSystems work like Draw but with the given systems.
+	DrawWithSystems(screen *ebiten.Image, drawers []Drawer, drawersOnce map[LayerID][]DrawerOnce)
+
 	// Update will go through all layers.
 	// Calls all UpdaterOnce systems once.
 	// Calls all Updater systems for each world Entity.
 	// Calls are performed in the order of the layers.
 	Update()
+
+	// UpdateWithSystems work like Update but with the given systems.
+	UpdateWithSystems(updaters []Updater, updatersOnce []UpdaterOnce)
 
 	// Freeze will stop the world from updating.
 	// Child world are not frozen but won't update if the parent world is frozen.
